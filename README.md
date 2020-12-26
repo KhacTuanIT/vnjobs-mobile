@@ -20,10 +20,10 @@ Version: **Beta 0.1.0**
 ## Installation Guide
 1. Clone This project.
 
-	`git clone https://github.com/HungThinh0710/vnjobs-mobile.git`
+	`git clone https://github.com/SinJunior/vnjobs-mobile.git`
 2. Install necessary components with yarn or npm.
 
-	`cd VNJobs\ `
+	`cd vnjobs-mobile\ `
 
 	`yard` or `npm install`
 3. Run App with yarn or npm
