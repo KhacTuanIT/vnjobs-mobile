@@ -28,4 +28,4 @@ Version: **Beta 0.1.0**
 	`yard` or `npm install`
 3. Run App with yarn or npm
 
-  `yarn start` or `npm start`
+  	`yarn start` or `npm start`
