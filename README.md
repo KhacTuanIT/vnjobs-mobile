@@ -1,4 +1,4 @@
-# VNJOBS API - Specialized Project 1 of VKU 2020
+# VNJOBS MOBILE APP - Specialized Project 1 of VKU 2020
 
 <p align="center">
 Description: This is the Mobile App for Specialized Project 1 of VKU 2020 for Job seeker and personal or company can connect together easier.
