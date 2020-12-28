@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Image, Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, Linking, SafeAreaView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import GroupTab from '../../components/Signin/GroupTab'
 import SigninButton from '../../components/Signin/SigninButton'
 import SigninInput from '../../components/Signin/SigninInput'
@@ -10,6 +10,13 @@ import * as APIURL from '../../utils/APIUrl'
 export default function Signin({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const showToastLoginFail = () => {
+        ToastAndroid.show("Email/Password wrong! Please Try again.", ToastAndroid.SHORT)
+    }
+
+    // const showToastLoginFail = (message) => {
+    //     ToastAndroid.show(message, ToastAndroid.SHORT)
+    // }
 
     const checkLogin = () => {
         return fetch(APIURL.AUTH_URL, {
@@ -28,10 +35,10 @@ export default function Signin({navigation}) {
             if (json.user.email === email) 
                 navigation.navigate('Home', { userObject: json })
             else
-                alert("Email/Password wrong! Please Try again.") 
+                showToastLoginFail()
         })
         .catch((error) => {
-            alert("Email/Password wrong! Please Try again.") 
+            showToastLoginFail()
         });
     }
     return (
@@ -54,9 +61,8 @@ export default function Signin({navigation}) {
                 secureTextEntry={true} 
             />
             <View style={styles.authGrButton}>
-                <SigninButton onPress={() => navigation.navigate('Home')} title="GO!" />
+                <SigninButton onPress={() => checkLogin()} title="GO!" />
             </View>
-            <SigninButton title="Check" onPress={() => checkLogin()} />
             <Text style={styles.forgetLink}
                 onPress={() => Linking.openURL('http://google.com')}
             >
