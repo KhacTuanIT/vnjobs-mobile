@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     signinButtonText: {
-        flex: 1,
         textAlign: 'center',
         textAlignVertical: 'center',
         color: '#fff',
