@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         width: 250,
         height: 45,
         justifyContent: 'center',
-        borderRadius: 25,
+        borderRadius: 10,
         backgroundColor: "#4CB3B8",
         shadowColor: "#000",
         shadowOffset: {
@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     signinButtonText: {
-        flex: 1,
         textAlign: 'center',
         textAlignVertical: 'center',
         color: '#fff',

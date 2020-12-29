@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState, useImperativeHandle } from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 
@@ -29,8 +29,9 @@ const showEndIcon = (endIcon, onChangeSecureTextEntry, secureTextEntry) => {
     return null
 }
 
-export default function SigninInput(
-    {
+
+const SignInInput = (props, ref) => {
+    const {
         iconStart = null, 
         iconEnd = null, 
         placeholder = "", 
@@ -38,8 +39,10 @@ export default function SigninInput(
         secureTextEntry = false,
         keyboardType = "default",
         setText
-    }) {
-    const [text, onChangeText] = useState('')
+    } = props;
+    
+    const inputRef = useRef();
+    const [text, onChangeText] = useState('') 
     const [secureTE, onChangeSecureTextEntry] = useState(secureTextEntry)
     
     const handleChangeText = text => {
@@ -47,10 +50,20 @@ export default function SigninInput(
         setText(text)
     }
 
+
+    useImperativeHandle(ref, () => ({
+        clearText: () => {
+            console.log('clear-password-field_text-activated');
+            inputRef.current.clear();
+        }
+
+      }));
+
     return (
         <View style={styles.inputLogin}>
             { showStartIcon(iconStart) }
-            <TextInput 
+            <TextInput
+                ref = {inputRef}
                 style={styles.textInput} 
                 placeholder={placeholder} 
                 defaultValue={text}
@@ -64,15 +77,18 @@ export default function SigninInput(
     )
 }
 
+
+export default React.forwardRef(SignInInput);
+
+
 const styles = StyleSheet.create({
     inputLogin: {
-        // flex: 1,
         flexDirection: 'row',
         width: 320,
         height: 45,
         marginVertical: 7,
         marginHorizontal: 'auto',
-        borderRadius: 24,
+        borderRadius: 10,
         shadowColor: "#000",
         shadowOffset: {
             width: 4,

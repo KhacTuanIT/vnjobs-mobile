@@ -1,4 +1,4 @@
-export function callLoginAPI(endpoint, method = "GET", body, callbacks) {
+export default async function callLoginAPI(endpoint, method = "GET", body, callbacks) {
     const header = {
         Accept: 'application/json',
         'Content-Type': 'application/json'
@@ -14,4 +14,8 @@ export function callLoginAPI(endpoint, method = "GET", body, callbacks) {
     .catch((error) => {
         callbacks
     });
+
+    // const response = 
+
+
 }

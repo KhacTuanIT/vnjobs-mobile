@@ -1,1 +1,1 @@
-export const AUTH_URL = "http://api.vnjobs.tk/api/v1/auth/login"
+export const AUTH_URL = 'http://api.vnjobs.tk/api/v1/auth/login'
