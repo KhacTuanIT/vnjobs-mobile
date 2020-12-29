@@ -32,7 +32,7 @@ function HomeStack({navigation}) {
 }
 
 const UserNavigator = createStackNavigator();
-function UserStack() {
+function UserStack({navigation}) {
     return (
         <HomeNavigator.Navigator
             initialRouteName="User"
@@ -41,6 +41,13 @@ function UserStack() {
             <HomeNavigator.Screen 
                 name="User"
                 component={UserInformation}
+                options={{
+                    headerRight: () => (
+                        <TouchableOpacity style={styles.buttonBars} onPress={() => navigation.openDrawer()}>
+                            <Icon name="bars" size={25} />
+                        </TouchableOpacity>
+                    ),
+                }}
             />
         </HomeNavigator.Navigator>
     )
@@ -84,7 +91,11 @@ function AppTab() {
             tabBarOptions={{
                 activeTintColor: 'tomato',
                 inactiveTintColor: 'gray',
-                labelStyle: { fontSize: 14 }
+                labelStyle: { fontSize: 14 },
+                tabStyle: {
+                    paddingBottom: 3, 
+                    paddingTop: 3,
+                }
             }}
         >
             <AppNavigator.Screen 

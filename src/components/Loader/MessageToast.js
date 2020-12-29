@@ -15,14 +15,19 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '10%',
         bottom: 0,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     hide: {
         display: 'none'
     },
     textToast: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#ff3979',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 25,
+        backgroundColor: '#f5f5f5',
+        opacity: 0.8
     }
 })
