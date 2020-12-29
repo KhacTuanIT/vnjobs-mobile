@@ -10,36 +10,23 @@ import * as APIURL from '../../utils/APIUrl'
 export default function Signin({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const showToastLoginFail = () => {
-        ToastAndroid.show("Email/Password wrong! Please Try again.", ToastAndroid.SHORT)
-    }
+    // const showToastLoginFail = () => {
+    //     ToastAndroid.show("Email/Password wrong! Please Try again.", ToastAndroid.SHORT)
+    // }
 
     // const showToastLoginFail = (message) => {
     //     ToastAndroid.show(message, ToastAndroid.SHORT)
     // }
 
     const checkLogin = () => {
-        return fetch(APIURL.AUTH_URL, {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              email,
-              password
-            })
-        })
-        .then((response) => response.json())
-        .then((json) => {
-            if (json.user.email === email) 
-                navigation.navigate('Home', { userObject: json })
-            else
-                showToastLoginFail()
-        })
-        .catch((error) => {
-            showToastLoginFail()
-        });
+        const callbacks = []
+        return callLoginAPI(APIURL, "POST", 
+            JSON.stringify({
+                email,
+                password
+            }),
+            callbacks
+        )
     }
     return (
         <SafeAreaView style={styles.container}>
