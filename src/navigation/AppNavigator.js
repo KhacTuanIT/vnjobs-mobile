@@ -56,7 +56,7 @@ function SignInStack() {
             <SignInNavigator.Screen 
                 name="LogIn"
                 component={Signin}
-                options={{title: "Log In"}}
+                options={{title: "Sign In"}}
             />
         </SignInNavigator.Navigator>
     )
@@ -104,7 +104,7 @@ function SideMenuDrawer() {
     return (
         <SideNavigator.Navigator>
             <SideNavigator.Screen name="Home" component={AppTab} />
-            <SideNavigator.Screen name="LogIn" component={SignInStack} options={{title: "Log In"}}/>
+            <SideNavigator.Screen name="LogIn" component={SignInStack} options={{title: "Sign In"}}/>
         </SideNavigator.Navigator>
     )
 }

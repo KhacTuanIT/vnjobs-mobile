@@ -1,16 +1,19 @@
 import React, { useState, useRef } from 'react'
-import { Image, Linking, SafeAreaView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import { Image, Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import GroupTab from '../../components/Signin/GroupTab'
 import SigninButton from '../../components/Signin/SigninButton'
 import SigninInput from '../../components/Signin/SigninInput'
 import logo from '../../../assets/images/VJlogo.png'
 import * as APIURL from '../../utils/APIUrl'
+import Loader from '../../components/Loader/Loader'
+import MessageToast from '../../components/Loader/MessageToast'
 const axios = require('axios');
 
 export default function Signin({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [failedText, setFailedText] = useState(false)
+    const [loginLoader, setLoginLoader] = useState(false)
 
     const pwd = useRef('')
 
@@ -18,6 +21,8 @@ export default function Signin({navigation}) {
 
     function showFailedNoitification(){
         setFailedText(true)
+        setLoginLoader(false)
+        setTimeout(() => {setFailedText(false)}, 5000)
     }
 
     function redirectView (response) {
@@ -25,6 +30,7 @@ export default function Signin({navigation}) {
     }
 
     const checkLogin = async () => {
+        setLoginLoader(true)
         try {            
             const header = {
                 Accept: 'application/json',
@@ -44,8 +50,8 @@ export default function Signin({navigation}) {
             // console.log(response.data)
             if(response.status === 200) {
                 console.log(response.data);
-                    redirectView(response)
-
+                setLoginLoader(false)
+                redirectView(response)
             }
             else 
                 setStatusLogin(true)
@@ -59,48 +65,53 @@ export default function Signin({navigation}) {
         }
     }
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.logo}>
-                <Image source={logo} style={styles.imgLogo} />
-            </View>
-            { failedText &&
-                <View>
-                    <Text style={styles.notification}>Wrong Username or Password !!</Text>
+        <SafeAreaView>
+            <View style={styles.container}>
+                <View style={styles.logo}>
+                    <Image source={logo} style={styles.imgLogo} />
                 </View>
-            }
-            <SigninInput 
-                placeholder="Email" 
-                iconStart="envelope" 
-                keyboardType="email-address"
-                setText={setEmail}
-            />
-            <SigninInput
-                ref = {pwd}
-                placeholder="Password" 
-                textContentType="password" 
-                iconStart="key" 
-                iconEnd="eye-slash" 
-                setText={setPassword}
-                secureTextEntry={true} 
-            />
-            <View style={styles.authGrButton}>
-                <SigninButton onPress={() => checkLogin()} title="SIGN IN" />
+                <View>
+                    <SigninInput 
+                        placeholder="Email" 
+                        iconStart="envelope" 
+                        keyboardType="email-address"
+                        setText={setEmail}
+                    />
+                    <SigninInput
+                        ref = {pwd}
+                        placeholder="Password" 
+                        textContentType="password" 
+                        iconStart="key" 
+                        iconEnd="eye-slash" 
+                        setText={setPassword}
+                        secureTextEntry={true} 
+                    />
+                </View>
+                
+                <View style={styles.authGrButton}>
+                    <SigninButton onPress={() => checkLogin()} title="SIGN IN" />
+                </View>
+                <View>
+                    <Text style={styles.forgetLink}
+                        onPress={() => Linking.openURL('http://google.com')}
+                    >
+                        Forget pasword?    
+                    </Text>
+                </View>
+                <GroupTab />
             </View>
-            <View>
-                <Text style={styles.forgetLink}
-                    onPress={() => Linking.openURL('http://google.com')}
-                >
-                    Forget pasword?    
-                </Text>
-            </View>
-            <GroupTab />
+            <Loader visible={loginLoader} />
+            <MessageToast 
+                message={email !== "" ? "Email/Password was wrong!" : "Email/Password is required!"} 
+                visible={failedText} 
+            />
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        height: '100%',
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
