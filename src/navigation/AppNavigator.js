@@ -32,7 +32,7 @@ function HomeStack({navigation}) {
 }
 
 const UserNavigator = createStackNavigator();
-function UserStack() {
+function UserStack({navigation}) {
     return (
         <HomeNavigator.Navigator
             initialRouteName="User"
@@ -41,6 +41,13 @@ function UserStack() {
             <HomeNavigator.Screen 
                 name="User"
                 component={UserInformation}
+                options={{
+                    headerRight: () => (
+                        <TouchableOpacity style={styles.buttonBars} onPress={() => navigation.openDrawer()}>
+                            <Icon name="bars" size={25} />
+                        </TouchableOpacity>
+                    ),
+                }}
             />
         </HomeNavigator.Navigator>
     )
@@ -56,7 +63,7 @@ function SignInStack() {
             <SignInNavigator.Screen 
                 name="LogIn"
                 component={Signin}
-                options={{title: "Log In"}}
+                options={{title: "Sign In"}}
             />
         </SignInNavigator.Navigator>
     )
@@ -84,7 +91,11 @@ function AppTab() {
             tabBarOptions={{
                 activeTintColor: 'tomato',
                 inactiveTintColor: 'gray',
-                labelStyle: { fontSize: 14 }
+                labelStyle: { fontSize: 14 },
+                tabStyle: {
+                    paddingBottom: 3, 
+                    paddingTop: 3,
+                }
             }}
         >
             <AppNavigator.Screen 
@@ -104,7 +115,7 @@ function SideMenuDrawer() {
     return (
         <SideNavigator.Navigator>
             <SideNavigator.Screen name="Home" component={AppTab} />
-            <SideNavigator.Screen name="LogIn" component={SignInStack} options={{title: "Log In"}}/>
+            <SideNavigator.Screen name="LogIn" component={SignInStack} options={{title: "Sign In"}}/>
         </SideNavigator.Navigator>
     )
 }

@@ -1,0 +1,33 @@
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+
+export default function MessageToast({visible = false, message = ""}) {
+    return (
+        <View style={visible ? styles.container : styles.hide}>
+            <Text style={styles.textToast}>{message}</Text>
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        width: '100%',
+        height: '10%',
+        bottom: 0,
+        alignItems: 'center',
+    },
+    hide: {
+        display: 'none'
+    },
+    textToast: {
+        fontSize: 15,
+        color: '#ff3979',
+        fontWeight: 'bold',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 25,
+        backgroundColor: '#f5f5f5',
+        opacity: 0.8
+    }
+})
