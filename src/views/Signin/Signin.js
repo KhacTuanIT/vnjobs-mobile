@@ -1,73 +1,90 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Image, Linking, SafeAreaView, StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import GroupTab from '../../components/Signin/GroupTab'
 import SigninButton from '../../components/Signin/SigninButton'
 import SigninInput from '../../components/Signin/SigninInput'
 import logo from '../../../assets/images/VJlogo.png'
 import * as APIURL from '../../utils/APIUrl'
-import callLoginAPI from '../../utils/callAPI'
-
+const axios = require('axios');
 
 export default function Signin({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [failedText, setFailedText] = useState(false)
 
-    const checkLogin = () => {
-        const data = {
-            email,
-            password
+    const pwd = useRef('')
+
+    // const testRef = React.createRef();
+
+    function showFailedNoitification(){
+        setFailedText(true)
+    }
+
+    function redirectView (response) {
+        navigation.navigate('Home', { userObject: response.json })
+    }
+
+    const checkLogin = async () => {
+        try {            
+            const header = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            }
+    
+            const response = await axios({
+                method: 'POST',
+                url: APIURL.AUTH_URL,
+                headers: {header},
+                data: {
+                  email: email,
+                  password: password
+                }
+              });
+            
+            // console.log(response.data)
+            if(response.status === 200) {
+                console.log(response.data);
+                    redirectView(response)
+
+            }
+            else 
+                setStatusLogin(true)
+            
+        } catch (error) {
+            console.log(error.response);
+            console.log(error.response.status);
+            showFailedNoitification();
+            pwd.current.clearText();
+
         }
-        callLoginAPI(APIURL.AUTH_URL, "POST", 
-            data,
-            // [() => {alert("fail")}]
-            // [setEmail(''), setPassword(''), () => {alert('fail')}]
-        )
-        // return fetch(APIURL.AUTH_URL, {
-        //     method: 'POST',
-        //     headers: {
-        //       Accept: 'application/json',
-        //       'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //       email,
-        //       password
-        //     })
-        // })
-        // .then((response) => response.json())
-        // .then((json) => {
-        //     alert(JSON.stringify(json))
-        //     if (json.user.email === email) 
-        //         navigation.navigate('Home', { userObject: json })
-        //     else
-        //         alert("Email/Password wrong! Please Try again.") 
-        // })
-        // .catch((error) => {
-        //     alert("Email/Password wrong! Please Try again.") 
-        // });
     }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.logo}>
                 <Image source={logo} style={styles.imgLogo} />
             </View>
-            <View>
-                <SigninInput 
-                    placeholder="Email" 
-                    iconStart="envelope" 
-                    keyboardType="email-address"
-                    setText={setEmail}
-                />
-                <SigninInput 
-                    placeholder="Password" 
-                    textContentType="password" 
-                    iconStart="key" 
-                    iconEnd="eye-slash" 
-                    setText={setPassword}
-                    secureTextEntry={true} 
-                />
-            </View>            
+            { failedText &&
+                <View>
+                    <Text style={styles.notification}>Wrong Username or Password !!</Text>
+                </View>
+            }
+            <SigninInput 
+                placeholder="Email" 
+                iconStart="envelope" 
+                keyboardType="email-address"
+                setText={setEmail}
+            />
+            <SigninInput
+                ref = {pwd}
+                placeholder="Password" 
+                textContentType="password" 
+                iconStart="key" 
+                iconEnd="eye-slash" 
+                setText={setPassword}
+                secureTextEntry={true} 
+            />
             <View style={styles.authGrButton}>
-                <SigninButton onPress={() => checkLogin()} title="GO!" />
+                <SigninButton onPress={() => checkLogin()} title="SIGN IN" />
             </View>
             <View>
                 <Text style={styles.forgetLink}
@@ -104,5 +121,12 @@ const styles = StyleSheet.create({
         color: 'blue',
         textDecorationLine: 'underline',
         marginTop: 10
+    },
+    notification: {
+        fontWeight: 'bold',
+        color: 'red',
+        paddingTop: 15,
+        paddingBottom: 15
     }
+
 })
