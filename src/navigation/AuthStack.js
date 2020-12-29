@@ -9,6 +9,13 @@ export default function AuthStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen 
+                name="Home"
+                component={Home}
+                options={{ 
+                    title: "VNJobs"
+                }}
+            />
+            <Stack.Screen 
                 name="SignIn"
                 component={Signin}
                 options={{
@@ -22,13 +29,7 @@ export default function AuthStack() {
                     },
                   }}
             />
-            <Stack.Screen 
-                name="Home"
-                component={Home}
-                options={{ 
-                    title: "VNJobs"
-                }}
-            />
+            
         </Stack.Navigator>
     )
 }
