@@ -18,6 +18,8 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
     "Account",
     "Elements",
     "Articles",
+    'Login',
+    'ListJobs'
   ];
   return (
     <Block

@@ -15,6 +15,8 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
+import Login from "../screens/Login";
+import ListJobs from "../screens/ListJobs";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -226,8 +228,10 @@ function AppStack(props) {
       <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Account" component={Register} />
+      <Drawer.Screen name="Login" component={Login} />
       <Drawer.Screen name="Elements" component={ElementsStack} />
       <Drawer.Screen name="Articles" component={ArticlesStack} />
+      <Drawer.Screen name="ListJobs" component={ListJobs} />
     </Drawer.Navigator>
   );
 }
