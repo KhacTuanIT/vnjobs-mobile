@@ -56,7 +56,7 @@ class Register extends React.Component {
                 </Block>
               </Block>
               <Block flex>
-                <Block flex={0.17} middle>
+                <Block flex={0.10} middle>
                   <Text color="#8898AA" size={12}>
                     Or sign up the classic way
                   </Text>
@@ -67,10 +67,10 @@ class Register extends React.Component {
                     behavior="padding"
                     enabled
                   >
-                    <Block width={width * 0.8} style={{ marginBottom: 15 }}>
+                    <Block width={width * 0.8}>
                       <Input
                         borderless
-                        placeholder="Name"
+                        placeholder="Fullname"
                         iconContent={
                           <Icon
                             size={16}
@@ -82,7 +82,7 @@ class Register extends React.Component {
                         }
                       />
                     </Block>
-                    <Block width={width * 0.8} style={{ marginBottom: 15 }}>
+                    <Block width={width * 0.8}>
                       <Input
                         borderless
                         placeholder="Email"
@@ -96,8 +96,6 @@ class Register extends React.Component {
                           />
                         }
                       />
-                    </Block>
-                    <Block width={width * 0.8}>
                       <Input
                         password
                         borderless
@@ -112,21 +110,29 @@ class Register extends React.Component {
                           />
                         }
                       />
-                      <Block row style={styles.passwordCheck}>
-                        <Text size={12} color={argonTheme.COLORS.MUTED}>
-                          password strength:
-                        </Text>
-                        <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                          {" "}
-                          strong
-                        </Text>
-                      </Block>
+                    </Block>
+                    <Block width={width * 0.8}>
+                      <Input
+                        password
+                        borderless
+                        placeholder="Confirm password"
+                        iconContent={
+                          <Icon
+                            size={16}
+                            color={argonTheme.COLORS.ICON}
+                            name="padlock-unlocked"
+                            family="ArgonExtra"
+                            style={styles.inputIcons}
+                          />
+                        }
+                      />
                     </Block>
                     <Block row width={width * 0.75}>
                       <Checkbox
                         checkboxStyle={{
                           borderWidth: 3
                         }}
+                        initialValue = {true}
                         color={argonTheme.COLORS.PRIMARY}
                         label="I agree with the"
                       />
@@ -148,6 +154,13 @@ class Register extends React.Component {
                         </Text>
                       </Button>
                     </Block>
+                    <Block middle style={styles.moreAboutAccount}>
+                      <Text> Already have an account </Text>
+                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY}>
+                        {" "}
+                        Signin
+                      </Text>
+                    </Block>
                   </KeyboardAvoidingView>
                 </Block>
               </Block>
@@ -161,8 +174,8 @@ class Register extends React.Component {
 
 const styles = StyleSheet.create({
   registerContainer: {
-    width: width * 0.9,
-    height: height * 0.78,
+    width: width,
+    height: height,
     backgroundColor: "#F4F5F7",
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
@@ -201,15 +214,13 @@ const styles = StyleSheet.create({
   inputIcons: {
     marginRight: 12
   },
-  passwordCheck: {
-    paddingLeft: 15,
-    paddingTop: 13,
-    paddingBottom: 30
-  },
   createButton: {
     width: width * 0.5,
     marginTop: 25
-  }
+  },
+  moreAboutAccount: {
+    paddingTop: 30,
+  },
 });
 
 export default Register;
