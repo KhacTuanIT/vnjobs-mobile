@@ -12,20 +12,88 @@ import { Block, Checkbox, Link, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { forwardRef } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import * as API from "../api/endpoints"
 const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
-class Login extends React.Component {
+class Login extends React.Component { 
 
-  state = {
-    email: null,
-    password: null,
-    isLoginFailed: false,
-    LoadingAPI: false,
-    loginButtonText: 'SIGN IN',
-    errorMessage: null,
+  constructor(props){
+    super(props)
+    this.state = {
+      email: null,
+      password: null,
+      isLoginFailed: false,
+      LoadingAPI: false,
+      loginButtonText: 'SIGN IN',
+      errorMessage: null,
+    }
+  }
+
+  async checkValidUser(token){
+    const validStatusCode = 200;
+
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}` 
+    };
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url: API.CHECK_VALID_TOKEN,
+        headers: headers,
+      });
+      console.log(response.status);
+      return response.status === validStatusCode
+    } catch (error) {
+      return error.response.status === validStatusCode
+    }
+  }
+
+  getUserFromStore = async () => {
+    try {
+      const user = await AsyncStorage.getItem('user')
+      if(user !== null) {
+        // value previously stored
+        return JSON.parse(user);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  saveUserInfo = async (user) => {
+    try {
+      const userObj = JSON.stringify(user)
+      console.log(userObj);
+      await AsyncStorage.setItem('user', userObj)
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  }
+
+  navigationToHome() {
+    const {navigation} = this.props
+    return navigation.navigate("Home")
+  }
+
+  async componentDidMount(){
+    console.log("moi vao chay r");
+    const user = await this.getUserFromStore();
+    const token = user.access_token
+    const isValid = await this.checkValidUser(token)
+    // console.log(user.access_token);
+    console.log("LAST_CHECK");
+    console.log(isValid);
+    if(isValid){
+      this.navigationToHome()
+    }
   }
 
   async login(data) {
@@ -41,18 +109,19 @@ class Login extends React.Component {
         headers: headers,
         data,
       });
+      console.log(response.status);
       if (response.status === 200) {
         this.setState({ loginButtonText: 'SIGN IN' })
-        console.log("dang nhap thanh cong");
-        // navigation.navigate('Home')
+        this.saveUserInfo(response.data)
+        this.navigationToHome()
       }
     } catch (error) {
       this.setState({ loginButtonText: 'SIGN IN' })
+      console.log(error);
       if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
         this.showErrors('api-error')
         this.setState({ isLoginFailed: true })
         this.setState({ password: '' })
-        
         console.log("dang nhap ko thanh cong")
       }
     }
@@ -87,8 +156,6 @@ class Login extends React.Component {
 
   }
   render() {
-    const { navigation } = this.props;
-    // console.log(navigation.navigate('Home'));
     return (
       <Block flex middle>
         <StatusBar hidden />
