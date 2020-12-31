@@ -11,10 +11,81 @@ import { Block, Checkbox, Link, Text, theme } from "galio-framework";
 
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
+import { forwardRef } from "react";
+import * as API from "../api/endpoints"
+const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
 class Login extends React.Component {
+
+  state = {
+    email: null,
+    password: null,
+    isLoginFailed: false,
+    LoadingAPI: false,
+    loginButtonText: 'SIGN IN',
+    errorMessage: null,
+  }
+
+  async login(data) {
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url: API.LOGIN,
+        headers: headers,
+        data,
+      });
+      if (response.status === 200) {
+        this.setState({ loginButtonText: 'SIGN IN' })
+        console.log("dang nhap thanh cong");
+        // navigation.navigate('Home')
+      }
+    } catch (error) {
+      this.setState({ loginButtonText: 'SIGN IN' })
+      if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
+        this.showErrors('api-error')
+        this.setState({ isLoginFailed: true })
+        this.setState({ password: '' })
+        
+        console.log("dang nhap ko thanh cong")
+      }
+    }
+  }
+
+  showErrors(type){
+    switch (type) {
+      case 'input-error':
+        this.setState({errorMessage :'Please enter your email or password!'})
+        break;
+      case 'api-error':
+        this.setState({errorMessage: 'Email or password are wrong!'})
+        break;
+     
+    }
+  }
+
+  prepareLogin() {
+    console.log("+==================+");
+    const data = {
+      email: this.state.email,
+      password: this.state.password,
+    }
+
+    if (data.email && data.password) {
+      this.setState({ loginButtonText: 'PLEASE WAIT...' })
+      this.login(data)
+    } else {
+      this.setState({ isLoginFailed: true })
+      this.showErrors('input-error')
+    }
+
+  }
   render() {
     const { navigation } = this.props;
     // console.log(navigation.navigate('Home'));
@@ -34,6 +105,12 @@ class Login extends React.Component {
                   </Text>
                 </Block>
                 <Block flex center>
+                  {
+                    this.state.isLoginFailed &&
+                    <Text style={styles.notification} size={15}>
+                      {this.state.errorMessage}
+                  </Text>
+                  }
                   <KeyboardAvoidingView
                     style={{ flex: 1 }}
                     behavior="padding"
@@ -41,6 +118,7 @@ class Login extends React.Component {
                   >
                     <Block width={width * 0.8} style={{ marginBottom: 15 }}>
                       <Input
+                        onChangeText={email => this.setState({ email: email })}
                         borderless
                         placeholder="Email"
                         iconContent={
@@ -56,9 +134,11 @@ class Login extends React.Component {
                     </Block>
                     <Block width={width * 0.8}>
                       <Input
+                        onChangeText={pwd => this.setState({ password: pwd })}
                         password
                         borderless
                         placeholder="Password"
+                        value={this.state.password}
                         iconContent={
                           <Icon
                             size={16}
@@ -75,7 +155,7 @@ class Login extends React.Component {
                           size={12}
                           color={argonTheme.COLORS.PRIMARY}
                           style={styles.textRight}
-                          // onPress={()=> navigation.navigate('Profile')} //navigate to forgot UI
+                        // onPress={()=> navigation.navigate('Profile')} //navigate to forgot UI
                         >
                           {" "}
                           Forgot password
@@ -83,9 +163,10 @@ class Login extends React.Component {
                       </Block>
                     </Block>
                     <Block middle>
-                      <Button color="primary" style={styles.createButton}>
+                      <Button
+                        color="primary" style={styles.createButton} onPress={() => this.prepareLogin(this)}>
                         <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                          SIGN IN
+                          {this.state.loginButtonText}
                         </Text>
                       </Button>
                     </Block>
@@ -201,6 +282,11 @@ const styles = StyleSheet.create({
   moreAboutAccount: {
     paddingTop: 35,
   },
+  notification: {
+    color: 'red',
+    fontWeight: 'bold',
+    paddingBottom: 20
+  }
 });
 
 export default Login;
