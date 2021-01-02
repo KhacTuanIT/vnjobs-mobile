@@ -73,7 +73,7 @@ function ArticlesStack(props) {
         component={Articles}
         options={{
           header: ({ navigation, scene }) => (
-            <Header title="Articles" navigation={navigation} scene={scene} />
+            <Header title="Bài viết" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
@@ -110,7 +110,7 @@ function ProfileStack(props) {
             <Header
               transparent
               white
-              title="Profile"
+              title="Hồ sơ cá nhân"
               navigation={navigation}
               scene={scene}
             />
@@ -151,8 +151,7 @@ function HomeStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Home"
-              search
+              title="Trang chủ"
               tabs={tabs.jobs}
               navigation={navigation}
               scene={scene}
