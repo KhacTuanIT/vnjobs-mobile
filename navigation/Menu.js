@@ -12,15 +12,46 @@ import { DrawerItem as DrawerCustomItem } from '../components';
 
 function CustomDrawerContent({ drawerPosition, navigation, profile, focused, state, ...rest }) {
   const insets = useSafeArea();
+  // const screens = [
+  //   "Home", 
+  //   "Profile",
+  //   "Account",
+  //   "Elements",
+  //   "Articles",
+  //   'Login',
+  //   'ListJobs'
+  // ];
   const screens = [
-    "Home", 
-    "Profile",
-    "Account",
-    "Elements",
-    "Articles",
-    'Login',
-    'ListJobs'
-  ];
+    {
+      title: "Trang chủ",
+      route: "Home"
+    },
+    {
+      title: "Hồ sơ cá nhân",
+      route: "Profile"
+    },
+    {
+      title: "Đăng ký",
+      route: "Account"
+    },
+    {
+      title: "Elements",
+      route: "Elements"
+    },
+    {
+      title: "Bài viết",
+      route: "Articles"
+    },
+    {
+      title: "Đăng nhập",
+      route: "Login"
+    },
+    {
+      title: "Danh sách việc làm",
+      route: "ListJobs"
+    },
+  ]
+
   return (
     <Block
       style={styles.container}
@@ -34,7 +65,8 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
           {screens.map((item, index) => {
               return (
                 <DrawerCustomItem
-                  title={item}
+                  title={item.title}
+                  route={item.route}
                   key={index}
                   navigation={navigation}
                   focused={state.index === index ? true : false}

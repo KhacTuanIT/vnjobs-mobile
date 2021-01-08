@@ -20,7 +20,7 @@ class Home extends React.Component {
             <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
           </TouchableOpacity>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
-            <Block flex row>
+            <Block flex row style={styles.blockArticles}>
               <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
               <Card item={articles[2]} />
             </Block>
@@ -32,7 +32,7 @@ class Home extends React.Component {
             <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
           </TouchableOpacity>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
-            <Block flex row>
+            <Block flex row style={styles.blockArticles}>
               <Card item={articles[4]} style={{ marginRight: theme.SIZES.BASE }} />
               <Card item={articles[0]} />
             </Block>
@@ -72,11 +72,16 @@ const styles = StyleSheet.create({
   },
   buttonBar: {
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'right',
+    textAlignVertical: 'center',
+    paddingHorizontal: 10,
   },
   scrolls: {
     marginTop: 0,
     paddingTop: 0
+  },
+  blockArticles: {
+    width: 500
   }
 });
 

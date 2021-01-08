@@ -15,7 +15,7 @@ class ListJobs extends React.Component {
           <Header
             tabs={tabs.categories}
             search
-            title="Title"
+            title="Danh sách việc làm"
             navigation={this.props.navigation}
           />
         </Block>
