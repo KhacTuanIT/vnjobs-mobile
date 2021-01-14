@@ -7,17 +7,95 @@ import {
   ImageBackground,
   Platform
 } from "react-native";
-import { Block, Text, theme } from "galio-framework";
+import { Block, Text, Button as GaButton, theme } from "galio-framework";
 
 import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
+import * as API from "../api/endpoints"
+import localStorageUtils from '../utils/local-store';
+
+const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
 class Profile extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      firstName: 'Đang tải',
+      lastName: 'dữ liệu',
+      dob: 'Đang tải dữ liệu',
+      phone: 'Đang tải dữ liệu',
+      email: 'Đang tải dữ liệu',
+      address: 'Đang tải dữ liệu',
+      bio: 'Đang tải dữ liệu',
+      social_linkedin: 'Đang tải dữ liệu',
+      social_facebook: 'Đang tải dữ liệu',
+    }
+  }
+
+  async componentDidMount(){
+    const userFromLocal = await localStorageUtils.getUserFromStore();
+    console.log(userFromLocal);
+    await this.getUserData(userFromLocal.user.id, userFromLocal.access_token);
+  }
+  
+  async getUserData(userId, token){
+
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+
+    try {
+      console.log(API.REGISTER);
+      const response = await axios({
+        method: 'GET',
+        url: `${API.GET_USER}?id=${userId}`,
+        headers: headers,        
+      });
+      console.log(response);
+      if(response.status === 200){
+        console.log("load Profile success");
+        console.log(response.data.email);
+        const user = response.data[0];
+        this.setState({
+          firstName: user.first_name,
+          lastName: user.last_name,
+          dob: user.dob,
+          phone: user.phone,
+          email: user.email,
+          address: user.address,
+          bio: user.bio,
+          social_linkedin: user.social_linkedin,
+          social_facebook: user.social_facebook,
+        });
+      }
+    } catch (error) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      if(error.response){
+        console.log("loi cmnr | Profile");
+        if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
+         //Tach 403/401 ra, neu gap 401 & 403 gi do thi vang ra bat dang nhap lai
+        }
+        else if(error.response.status === 405){
+          //method not allow
+        }
+        else if(error.response.status === 500){
+          //Server error, check return message and debug
+        }
+      }
+      else if (error.message === 'Network Error'){
+        
+      }
+    }
+  }
+
   render() {
     return (
       <Block flex style={styles.profile}>
@@ -47,7 +125,7 @@ class Profile extends React.Component {
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                        jessicaj@example.com
+                        {this.state.email}
                       </Text>
                       <Text size={12} color={argonTheme.COLORS.TEXT}>Email</Text>
                     </Block>
@@ -60,39 +138,51 @@ class Profile extends React.Component {
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                        223-562-142
+                        {!this.state.phone ? 'Chưa cập nhật':this.state.phone}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Phone</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Số điện thoại</Text>
                     </Block>
                   </Block>
                 </Block>
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      Jessica Jones, 27
+                      {this.state.firstName +' '+ this.state.lastName}
                     </Text>
                   </Block>
                 </Block>
               </Block>
               <Block flex style={styles.profileBlock}>
                 <Block style={styles.profileRow}>
-                  <Text style={styles.rowTextLeft} bold size={18} color="#333">Address</Text>
-                  <Text style={styles.rowTextRight} size={16} color="#333">Los Angles, US</Text>
+                  <Text style={styles.rowTextLeft} bold size={18} color="#333">Địa chỉ</Text>
+                  <Text style={styles.rowTextRight} size={16} color="#333">{this.state.address}</Text>
                 </Block>
               </Block>
               <Block flex style={styles.profileBlock}>
                 <Block style={styles.profileRow}>
                   <Text style={styles.rowTextLeft} bold size={18} color="#333">Bio</Text>
                   <Text style={styles.rowTextRight} size={16} color="#333">
-                    Its hands were holograms that altered to match the convolutions of the room where, ded to consist entirely of meticulous reconstruction’s of garments.
+                    {this.state.bio}
                   </Text>
                 </Block>
               </Block>
               <Block flex style={styles.profileBlock}>
                 <Block style={styles.profileRow}>
-                  <Text style={styles.rowTextLeft} bold size={18} color="#333">Facebook</Text>
+                <Block flex middle right>
+                <GaButton
+                  round
+                  onlyIcon
+                  shadowless
+                  icon="facebook"
+                  iconFamily="Font-Awesome"
+                  iconColor={theme.COLORS.WHITE}
+                  iconSize={theme.SIZES.BASE * 1}
+                  color={theme.COLORS.FACEBOOK}
+                  style={[styles.social, styles.shadow]}
+                />
+              </Block>
                   <Text style={styles.rowTextRight} size={16} color="#333">
-                    https://fb.com/jessicaj.27
+                    {this.state.social_facebook}
                   </Text>
                 </Block>
               </Block>
@@ -100,7 +190,7 @@ class Profile extends React.Component {
                 <Block style={styles.profileRow}>
                   <Text style={styles.rowTextLeft} bold size={18} color="#333">LinkedIn</Text>
                   <Text style={styles.rowTextRight} size={16} color="#333">
-                    https://linkedIn.com/jessicaj.27
+                    {this.state.social_linkedin}
                   </Text>
                 </Block>
               </Block>

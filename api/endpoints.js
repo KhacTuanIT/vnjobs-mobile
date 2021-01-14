@@ -6,3 +6,4 @@ const API = DOMAIN+VERSION_API;
 export const LOGIN = API+'auth/login';
 export const REGISTER = API+'auth/register';
 export const CHECK_VALID_TOKEN = API+'is-valid-token';
+export const GET_USER = API+'user';
