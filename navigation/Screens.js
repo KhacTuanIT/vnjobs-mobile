@@ -23,6 +23,7 @@ import CustomDrawerContent from "./Menu";
 // header for screens
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
+import RecruitmentNews from "../screens/RecruitmentNews";
 
 const { width } = Dimensions.get("screen");
 
@@ -72,7 +73,7 @@ function ArticlesStack(props) {
         component={Articles}
         options={{
           header: ({ navigation, scene }) => (
-            <Header title="Articles" navigation={navigation} scene={scene} />
+            <Header title="Bài viết" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
@@ -109,7 +110,7 @@ function ProfileStack(props) {
             <Header
               transparent
               white
-              title="Profile"
+              title="Hồ sơ cá nhân"
               navigation={navigation}
               scene={scene}
             />
@@ -139,6 +140,8 @@ function ProfileStack(props) {
   );
 }
 
+
+
 function HomeStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
@@ -148,9 +151,8 @@ function HomeStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Home"
-              search
-              options
+              title="Trang chủ"
+              tabs={tabs.jobs}
               navigation={navigation}
               scene={scene}
             />
@@ -164,6 +166,23 @@ function HomeStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
+              title=""
+              back
+              white
+              transparent
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
+        }}
+      />
+      <Stack.Screen 
+        name="RecruitmentNews"
+        component={RecruitmentNews}
+        option={{
+          header: ({navigation, scene}) => (
+            <Header 
               title=""
               back
               white
@@ -232,6 +251,7 @@ function AppStack(props) {
       <Drawer.Screen name="Elements" component={ElementsStack} />
       <Drawer.Screen name="Articles" component={ArticlesStack} />
       <Drawer.Screen name="ListJobs" component={ListJobs} />
+      <Drawer.Screen name="RecruitmentNewsDetail" component={RecruitmentNews} />
     </Drawer.Navigator>
   );
 }

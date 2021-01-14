@@ -35,7 +35,7 @@ export default class Tabs extends React.Component {
     Animated.timing(this.animatedValue, {
       toValue: 1,
       duration: 300,
-      // useNativeDriver: true, // color not supported
+      useNativeDriver: true, // color not supported
     }).start()
   }
 
@@ -80,7 +80,7 @@ export default class Tabs extends React.Component {
         <Animated.Text
           style={[
             styles.menuTitle,
-            { color: textColor }
+            // { color: textColor }
           ]}
           onPress={() => this.selectMenu(item.id)}>
           {item.title}

@@ -1,9 +1,11 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Block, theme } from 'galio-framework';
+import { StyleSheet, Dimensions, ScrollView, Text } from 'react-native';
+import { Block, Icon, theme } from 'galio-framework';
 
 import { Card } from '../components';
 import articles from '../constants/articles';
+import ArButton from '../components/Button';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
@@ -13,13 +15,28 @@ class Home extends React.Component {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.articles}>
         <Block flex>
-          <Card item={articles[0]} horizontal  />
-          <Block flex row>
-            <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
-            <Card item={articles[2]} />
-          </Block>
-          <Card item={articles[3]} horizontal />
-          <Card item={articles[4]} full />
+          <TouchableOpacity style={styles.moreBar}>
+            <Text style={styles.textBar}>News</Text>
+            <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
+          </TouchableOpacity>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
+            <Block flex row style={styles.blockArticles}>
+              <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
+              <Card item={articles[2]} />
+            </Block>
+          </ScrollView>
+        </Block>
+        <Block flex>
+          <TouchableOpacity style={styles.moreBar}>
+            <Text style={styles.textBar}>Companies</Text>
+            <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
+          </TouchableOpacity>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
+            <Block flex row style={styles.blockArticles}>
+              <Card item={articles[4]} style={{ marginRight: theme.SIZES.BASE }} />
+              <Card item={articles[0]} />
+            </Block>
+          </ScrollView>
         </Block>
       </ScrollView>
     )
@@ -40,8 +57,32 @@ const styles = StyleSheet.create({
   },
   articles: {
     width: width - theme.SIZES.BASE * 2,
-    paddingVertical: theme.SIZES.BASE,
+    paddingVertical: theme.SIZES.BASE/2,
   },
+  moreBar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    opacity: 0.6,
+    paddingVertical: 10,
+    margin: 0
+  },
+  textBar: {
+    flex: 4,
+    fontSize: 18
+  },
+  buttonBar: {
+    flex: 1,
+    textAlign: 'right',
+    textAlignVertical: 'center',
+    paddingHorizontal: 10,
+  },
+  scrolls: {
+    marginTop: 0,
+    paddingTop: 0
+  },
+  blockArticles: {
+    width: 500
+  }
 });
 
 export default Home;

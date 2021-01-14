@@ -7,9 +7,9 @@ import argonTheme from "../constants/Theme";
 
 class DrawerItem extends React.Component {
   renderIcon = () => {
-    const { title, focused } = this.props;
+    const { title, route, focused } = this.props;
 
-    switch (title) {
+    switch (route) {
       case "Home":
         return (
           <Icon
@@ -71,6 +71,13 @@ class DrawerItem extends React.Component {
           size={14}
           color={focused ? "white" : "rgba(0,0,0,0.5)"}
         />);
+      case "Login":
+        return (<Icon 
+          name="ios-log-in"
+          family="Ionicon"
+          size={16}
+          color={focused ? "white" : argonTheme.COLORS.SUCCESS}
+        />);
       case "Log out":
         return <Icon />;
       default:
@@ -79,7 +86,7 @@ class DrawerItem extends React.Component {
   };
 
   render() {
-    const { focused, title, navigation } = this.props;
+    const { focused, title, navigation, route } = this.props;
 
     const containerStyles = [
       styles.defaultStyle,
@@ -94,7 +101,7 @@ class DrawerItem extends React.Component {
             ? Linking.openURL(
                 "https://demos.creative-tim.com/argon-pro-react-native/docs/"
               ).catch(err => console.error("An error occurred", err))
-            : navigation.navigate(title)
+            : navigation.navigate(route)
         }
       >
         <Block flex row style={containerStyles}>
