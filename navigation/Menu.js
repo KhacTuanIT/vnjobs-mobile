@@ -15,11 +15,11 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
   const screens = [
     "Home", 
     "Profile",
-    "Account",
+    "Register",
     "Elements",
     "Articles",
     'Login',
-    'ListJobs'
+    'ListJobs',
   ];
   return (
     <Block
