@@ -32,7 +32,7 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
     },
     {
       title: "Đăng ký",
-      route: "Account"
+      route: "Register"
     },
     {
       title: "Elements",
@@ -51,7 +51,6 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
       route: "ListJobs"
     },
   ]
-
   return (
     <Block
       style={styles.container}

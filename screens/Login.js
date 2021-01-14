@@ -33,6 +33,11 @@ class Login extends React.Component {
     }
   }
 
+  navigateToSignUp(){
+    const {navigation} = this.props
+    return navigation.navigate("Register")
+  }
+
   async checkValidUser(token){
     const validStatusCode = 200;
 
@@ -118,16 +123,34 @@ class Login extends React.Component {
     } catch (error) {
       this.setState({ loginButtonText: 'SIGN IN' })
       console.log(error);
-      if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
-        this.showErrors('api-error')
+      console.log('hu'+error);
+      console.log(error.response);
+
+      console.log(error.message);
+      console.log(error == 'Network Error');
+      if(error.response){
+        if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
+          this.showErrors('api-error')
+          this.setState({ isLoginFailed: true })
+          this.setState({ password: '' })
+          console.log("dang nhap ko thanh cong")
+        }
+        else if(error.response.status === 500){
+          // console.log(error.response.data.message);
+          this.showErrors('api-error-500', error.response.data.message)
+          this.setState({ isLoginFailed: true })
+          console.log(`| Error msg: ${error.message} |`);
+        }
+      }
+      else if (error.message === 'Network Error'){
+        this.showErrors('network-error')
         this.setState({ isLoginFailed: true })
-        this.setState({ password: '' })
-        console.log("dang nhap ko thanh cong")
+        console.log(`| Error msg: ${error.message} |`);
       }
     }
   }
 
-  showErrors(type){
+  showErrors(type, msg = ''){
     switch (type) {
       case 'input-error':
         this.setState({errorMessage :'Please enter your email or password!'})
@@ -135,7 +158,12 @@ class Login extends React.Component {
       case 'api-error':
         this.setState({errorMessage: 'Email or password are wrong!'})
         break;
-     
+      case 'network-error':
+        this.setState({errorMessage: 'Error Network!'})
+        break;
+      default:
+        this.setState({errorMessage: msg})
+  
     }
   }
 
@@ -239,7 +267,9 @@ class Login extends React.Component {
                     </Block>
                     <Block middle style={styles.moreAboutAccount}>
                       <Text> You don't have account ? </Text>
-                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY}>
+                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY} 
+                      onPress={() => this.navigateToSignUp()}
+                      >
                         {" "}
                         Signup
                       </Text>
