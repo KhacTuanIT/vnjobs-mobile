@@ -1,5 +1,5 @@
-// const DOMAIN = 'http://api.vnjobs.tk';
-const DOMAIN = 'http://localhost:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
+const DOMAIN = 'http://api.vnjobs.tk';
+// const DOMAIN = 'http://localhost:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
 const VERSION_API = '/api/v1/';
 const API = DOMAIN+VERSION_API;
 
