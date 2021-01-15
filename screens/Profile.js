@@ -22,7 +22,7 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 
 class Profile extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       firstName: 'Đang tải',
@@ -34,16 +34,22 @@ class Profile extends React.Component {
       bio: 'Đang tải dữ liệu',
       social_linkedin: 'Đang tải dữ liệu',
       social_facebook: 'Đang tải dữ liệu',
+      userInfo: {}
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const userFromLocal = await localStorageUtils.getUserFromStore();
     console.log(userFromLocal);
-    await this.getUserData(userFromLocal.user.id, userFromLocal.access_token);
+    await this.getUserData(userFromLocal.user, userFromLocal.access_token);
   }
-  
-  async getUserData(userId, token){
+
+  navigateToScreen(screenName) {
+    const { navigation } = this.props
+    return navigation.navigate(screenName)
+  }
+
+  async getUserData(user, token,) {
 
     const headers = {
       Accept: 'application/json',
@@ -52,17 +58,52 @@ class Profile extends React.Component {
     };
 
     try {
-      console.log(API.REGISTER);
       const response = await axios({
         method: 'GET',
-        url: `${API.GET_USER}?id=${userId}`,
-        headers: headers,        
+        url: `${API.USER}`,
+        headers: headers,
       });
       console.log(response);
-      if(response.status === 200){
+      if (response.status === 200) {
         console.log("load Profile success");
-        console.log(response.data.email);
-        const user = response.data[0];
+        const userFetched = response.data;
+        this.setState({ userInfo: userFetched })
+        this.setState({
+          firstName: userFetched.first_name,
+          lastName: userFetched.last_name,
+          dob: userFetched.dob,
+          phone: userFetched.phone,
+          email: userFetched.email,
+          address: userFetched.address,
+          bio: userFetched.bio,
+          social_linkedin: userFetched.social_linkedin,
+          social_facebook: userFetched.social_facebook,
+        });
+
+        //Save to localStorage user
+        await localStorageUtils.saveUserToStore(userFetched);
+      }
+    } catch (error) {
+      console.log(error);
+      console.log(error.response.data);
+      console.log(error.response.status);
+      if (error.response) {
+        console.log("loi cmnr | Profile");
+        if (error.response.status === 401 || error.response.status === 403) {
+          //Tach 403/401 ra, neu gap 401 & 403 gi do thi vang ra bat dang nhap lai
+          this.navigateToScreen('Login');
+        }
+        else if (error.response.status === 404) {
+
+        }
+        else if (error.response.status === 405) {
+          //method not allow
+        }
+        else if (error.response.status === 500) {
+          //Server error, check return message and debug
+        }
+      }
+      else if (error.message === 'Network Error') {
         this.setState({
           firstName: user.first_name,
           lastName: user.last_name,
@@ -74,24 +115,6 @@ class Profile extends React.Component {
           social_linkedin: user.social_linkedin,
           social_facebook: user.social_facebook,
         });
-      }
-    } catch (error) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-      if(error.response){
-        console.log("loi cmnr | Profile");
-        if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
-         //Tach 403/401 ra, neu gap 401 & 403 gi do thi vang ra bat dang nhap lai
-        }
-        else if(error.response.status === 405){
-          //method not allow
-        }
-        else if(error.response.status === 500){
-          //Server error, check return message and debug
-        }
-      }
-      else if (error.message === 'Network Error'){
-        
       }
     }
   }
@@ -109,6 +132,7 @@ class Profile extends React.Component {
               showsVerticalScrollIndicator={false}
               style={{ width, marginTop: '25%' }}
             >
+
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
                   <Image
@@ -138,7 +162,7 @@ class Profile extends React.Component {
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                        {!this.state.phone ? 'Chưa cập nhật':this.state.phone}
+                        {!this.state.phone ? 'Chưa cập nhật' : this.state.phone}
                       </Text>
                       <Text size={12} color={argonTheme.COLORS.TEXT}>Số điện thoại</Text>
                     </Block>
@@ -147,9 +171,24 @@ class Profile extends React.Component {
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      {this.state.firstName +' '+ this.state.lastName}
+                      {this.state.firstName + ' ' + this.state.lastName}
                     </Text>
                   </Block>
+                </Block>
+                <Block flex middle>
+                  <GaButton
+                    round
+                    onlyIcon
+                    shadowless
+                    icon="edit"
+                    iconFamily="Font-Awesome"
+                    // iconColor={theme.COLORS.BLACK}
+                    iconSize={theme.SIZES.BASE * 1}
+                    // size={'small'}
+                    color={theme.COLORS.WHIYE}
+                    style={[styles.editBtn, styles.shadow]}
+                    onPress={() => this.navigateToScreen('EditProfile')}
+                  />
                 </Block>
               </Block>
               <Block flex style={styles.profileBlock}>
@@ -166,34 +205,55 @@ class Profile extends React.Component {
                   </Text>
                 </Block>
               </Block>
-              <Block flex style={styles.profileBlock}>
-                <Block style={styles.profileRow}>
+              <Block row center space="between">
                 <Block flex middle right>
-                <GaButton
-                  round
-                  onlyIcon
-                  shadowless
-                  icon="facebook"
-                  iconFamily="Font-Awesome"
-                  iconColor={theme.COLORS.WHITE}
-                  iconSize={theme.SIZES.BASE * 1}
-                  color={theme.COLORS.FACEBOOK}
-                  style={[styles.social, styles.shadow]}
-                />
-              </Block>
-                  <Text style={styles.rowTextRight} size={16} color="#333">
-                    {this.state.social_facebook}
-                  </Text>
+                  <GaButton
+                    round
+                    onlyIcon
+                    shadowless
+                    icon="facebook"
+                    iconFamily="Font-Awesome"
+                    iconColor={theme.COLORS.WHITE}
+                    iconSize={theme.SIZES.BASE * 1.625}
+                    color={theme.COLORS.FACEBOOK}
+                    style={[styles.social, styles.shadow]}
+                  />
+                </Block>
+                <Block flex middle center>
+                  <GaButton
+                    round
+                    onlyIcon
+                    shadowless
+                    icon="linkedin"
+                    iconFamily="Font-Awesome"
+                    iconColor={theme.COLORS.WHITE}
+                    iconSize={theme.SIZES.BASE * 1.625}
+                    color={theme.COLORS.LINKEDIN}
+                    style={[styles.social, styles.shadow]}
+                  />
+                </Block>
+                <Block flex middle left>
+                  <GaButton
+                    round
+                    onlyIcon
+                    shadowless
+                    icon="github"
+                    iconFamily="Font-Awesome"
+                    iconColor={theme.COLORS.WHITE}
+                    iconSize={theme.SIZES.BASE * 1.625}
+                    color={theme.COLORS.GITHUB}
+                    style={[styles.social, styles.shadow]}
+                  />
                 </Block>
               </Block>
-              <Block flex style={styles.profileBlock}>
+              {/* <Block flex style={styles.profileBlock}>
                 <Block style={styles.profileRow}>
                   <Text style={styles.rowTextLeft} bold size={18} color="#333">LinkedIn</Text>
                   <Text style={styles.rowTextRight} size={16} color="#333">
                     {this.state.social_linkedin}
                   </Text>
                 </Block>
-              </Block>
+              </Block> */}
             </ScrollView>
           </ImageBackground>
         </Block>
@@ -279,7 +339,23 @@ const styles = StyleSheet.create({
   },
   rowTextRight: {
     flex: 5,
-  }
+  },
+  button: {
+    marginBottom: theme.SIZES.BASE,
+    width: width - theme.SIZES.BASE * 2
+  },
+  social: {
+    width: theme.SIZES.BASE * 3.5,
+    height: theme.SIZES.BASE * 3.5,
+    borderRadius: theme.SIZES.BASE * 1.75,
+    justifyContent: "center"
+  },
+  editBtn: {
+    // width: theme.SIZES.BASE * 3,
+    // height: theme.SIZES.BASE * 2.5,
+    // borderRadius: theme.SIZES.BASE * 1.75,
+    justifyContent: "center"
+  },
 });
 
 export default Profile;

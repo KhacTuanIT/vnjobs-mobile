@@ -19,9 +19,9 @@ const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
-class Login extends React.Component { 
+class Login extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       email: null,
@@ -33,18 +33,18 @@ class Login extends React.Component {
     }
   }
 
-  navigateToSignUp(){
-    const {navigation} = this.props
+  navigateToSignUp() {
+    const { navigation } = this.props
     return navigation.navigate("Register")
   }
 
-  async checkValidUser(token){
+  async checkValidUser(token) {
     const validStatusCode = 200;
 
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
+      Authorization: `Bearer ${token}`
     };
 
     try {
@@ -63,7 +63,7 @@ class Login extends React.Component {
   getUserFromStore = async () => {
     try {
       const user = await AsyncStorage.getItem('user')
-      if(user !== null) {
+      if (user !== null) {
         // value previously stored
         return JSON.parse(user);
       }
@@ -75,7 +75,6 @@ class Login extends React.Component {
   saveUserInfo = async (user) => {
     try {
       const userObj = JSON.stringify(user)
-      console.log(userObj);
       await AsyncStorage.setItem('user', userObj)
     } catch (e) {
       // saving error
@@ -84,19 +83,22 @@ class Login extends React.Component {
   }
 
   navigationToHome() {
-    const {navigation} = this.props
+    const { navigation } = this.props
     return navigation.navigate("Home")
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     console.log("moi vao chay r");
     const user = await this.getUserFromStore();
-    const token = user.access_token
-    const isValid = await this.checkValidUser(token)
-    // console.log(user.access_token);
-    console.log("LAST_CHECK");
-    console.log(isValid);
-    if(isValid){
+    let isValid;
+    if (user) {
+      const token = user.access_token
+      isValid = await this.checkValidUser(token)
+      // console.log(user.access_token);
+      console.log("LAST_CHECK");
+      console.log(isValid);
+    }
+    if (isValid) {
       this.navigationToHome()
     }
   }
@@ -123,47 +125,47 @@ class Login extends React.Component {
     } catch (error) {
       this.setState({ loginButtonText: 'SIGN IN' })
       console.log(error);
-      console.log('hu'+error);
+      console.log('hu' + error);
       console.log(error.response);
 
       console.log(error.message);
       console.log(error == 'Network Error');
-      if(error.response){
+      if (error.response) {
         if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
-          this.showErrors('api-error')
+          this.showErrors('api-error', null);
           this.setState({ isLoginFailed: true })
           this.setState({ password: '' })
           console.log("dang nhap ko thanh cong")
         }
-        else if(error.response.status === 500){
+        else if (error.response.status === 500) {
           // console.log(error.response.data.message);
           this.showErrors('api-error-500', error.response.data.message)
           this.setState({ isLoginFailed: true })
           console.log(`| Error msg: ${error.message} |`);
         }
       }
-      else if (error.message === 'Network Error'){
-        this.showErrors('network-error')
+      else if (error.message === 'Network Error') {
+        this.showErrors('network-error', null)
         this.setState({ isLoginFailed: true })
         console.log(`| Error msg: ${error.message} |`);
       }
     }
   }
 
-  showErrors(type, msg = ''){
+  showErrors(type, msg = '') {
     switch (type) {
       case 'input-error':
-        this.setState({errorMessage :'Please enter your email or password!'})
+        this.setState({ errorMessage: 'Please enter your email or password!' })
         break;
       case 'api-error':
-        this.setState({errorMessage: 'Email or password are wrong!'})
+        this.setState({ errorMessage: 'Email or password are wrong!' })
         break;
       case 'network-error':
-        this.setState({errorMessage: 'Error Network!'})
+        this.setState({ errorMessage: 'Error Network!' })
         break;
       default:
-        this.setState({errorMessage: msg})
-  
+        this.setState({ errorMessage: msg })
+
     }
   }
 
@@ -179,7 +181,7 @@ class Login extends React.Component {
       this.login(data)
     } else {
       this.setState({ isLoginFailed: true })
-      this.showErrors('input-error')
+      this.showErrors('input-error', null)
     }
 
   }
@@ -204,7 +206,7 @@ class Login extends React.Component {
                     this.state.isLoginFailed &&
                     <Text style={styles.notification} size={15}>
                       {this.state.errorMessage}
-                  </Text>
+                    </Text>
                   }
                   <KeyboardAvoidingView
                     style={{ flex: 1 }}
@@ -267,8 +269,8 @@ class Login extends React.Component {
                     </Block>
                     <Block middle style={styles.moreAboutAccount}>
                       <Text> You don't have account ? </Text>
-                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY} 
-                      onPress={() => this.navigateToSignUp()}
+                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY}
+                        onPress={() => this.navigateToSignUp()}
                       >
                         {" "}
                         Signup

@@ -24,6 +24,11 @@ import CustomDrawerContent from "./Menu";
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
+import EditProfile from "../screens/EditProfile";
+
+
+//Toast
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get("screen");
 
@@ -252,6 +257,7 @@ function AppStack(props) {
       <Drawer.Screen name="Articles" component={ArticlesStack} />
       <Drawer.Screen name="ListJobs" component={ListJobs} />
       <Drawer.Screen name="RecruitmentNewsDetail" component={RecruitmentNews} />
+      <Drawer.Screen name="EditProfile" component={EditProfile} />
     </Drawer.Navigator>
   );
 }

@@ -17,8 +17,8 @@ getUserFromStore = async () => {
   saveUserInfo = async (user) => {
     try {
       const userObj = JSON.stringify(user)
-      console.log(userObj);
-      await AsyncStorage.setItem('user', userObj)
+      // console.log(userObj);
+      await AsyncStorage.setItem('user.user', userObj)
     } catch (e) {
       // saving error
       console.log(e);
