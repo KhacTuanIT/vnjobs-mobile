@@ -20,6 +20,7 @@ const axios = require('axios').default;
 const { width, height } = Dimensions.get("screen");
 
 class Login extends React.Component {
+  _unsubscribe = false
 
   constructor(props) {
     super(props)
@@ -66,6 +67,23 @@ class Login extends React.Component {
   }
 
   async componentDidMount() {
+
+    const { navigation } = this.props;
+    this._unsubscribe = navigation.addListener('focus', async() => {      
+      console.log("[LOGIN]: CHECKED LOGGED IN OR NOT");
+      const tokenInfo = await localStorageUtils.getTokenFromLS();
+      let isValid;
+      if (tokenInfo) {
+        const token = tokenInfo.access_token
+        isValid = await this.checkValidUser(token)
+        // console.log(user.access_token);
+      }
+      if (isValid) {
+        console.log("CHECKED: | OK | LOGGED IN | REDIRECTING TO HOME");
+        this.navigationToHome()
+      }
+    });
+
     console.log("LOGIN PAGE: CHECK LOGGED IN OR NOT");
     // const user = await this.getUserFromStore();
     const tokenInfo = await localStorageUtils.getTokenFromLS();
@@ -79,6 +97,10 @@ class Login extends React.Component {
       console.log("CHECKED: | OK | LOGGED IN | REDIRECTING TO HOME");
       this.navigationToHome()
     }
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
   async login(data) {
