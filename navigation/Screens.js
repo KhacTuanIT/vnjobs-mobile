@@ -1,5 +1,5 @@
 import React from "react";
-import { Easing, Animated, Dimensions } from "react-native";
+import { Easing, Animated, Dimensions, View } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -26,10 +26,6 @@ import CustomDrawerContent from "./Menu";
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
-
-
-//Toast
-import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get("screen");
 

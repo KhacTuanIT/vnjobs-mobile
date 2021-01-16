@@ -130,8 +130,12 @@ class EditProfile extends React.Component {
                 this.clearErrorState()
                 Toast.show({
                     type: 'success',
+                    position: 'top',
+                    topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                    visibilityTime: 2000,
                     text1: response.data.message,
                 });
+                await localStorageUtils.saveUserToLS(data)
             }
         } catch (error) {
             // console.log('Error: ' + error);
@@ -162,14 +166,20 @@ class EditProfile extends React.Component {
                     }
                     Toast.show({
                         type: 'error',
-                        text1: 'Update user information failed!',
+                        position: 'top',
+                        topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        visibilityTime: 2000,
+                        text1: 'Cập nhật thất bại!',
                     });
                 }
                 else if (error.response.status === 500) {
                     console.log(error.response.data);
                     Toast.show({
                         type: 'error',
-                        text1: 'Update user information failed!',
+                        position: 'top',
+                        topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        visibilityTime: 2000,                        
+                        text1: 'Cập nhật thất bại!',
                         text2: 'Error from server (500)'
                     });
                 }
@@ -178,8 +188,11 @@ class EditProfile extends React.Component {
                 console.log(`[EditProfile]: Update user data | UPDATED FAILED | MESSAGE ERROR: ${error.message}`);
                 Toast.show({
                     type: 'error',
-                    text1: 'Update user information failed!',
-                    text2: 'Network error!)'
+                    position: 'top',
+                    topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                    visibilityTime: 2000,
+                    text1: 'Cập nhật thất bại!',
+                    text2: 'Network error!',
                 });
             }
         }
@@ -212,11 +225,9 @@ class EditProfile extends React.Component {
     render() {
         return (
             <Block flex style={styles.profile}>
-                <Block style={{ zIndex: 9999999 }}>
+                <Block style={{ zIndex: 999 }}>
                     <Toast ref={(ref) => Toast.setRef(ref)} />
-
                 </Block>
-
                 <Block flex>
                     <ImageBackground
                         source={Images.ProfileBackground}
@@ -416,6 +427,7 @@ class EditProfile extends React.Component {
                                                 <Input
                                                     value={this.state.dob}
                                                     right
+                                                    placeholder={'Ngày sinh'}
                                                     onPress={() => this.showDatePicker()}
                                                     error={this.state.errorsState.dob}
                                                     iconContent={
@@ -573,8 +585,10 @@ class EditProfile extends React.Component {
                   </Block> */}
                         </ScrollView>
                     </ImageBackground>
+                
                 </Block>
             </Block>
+            
         );
     }
 }

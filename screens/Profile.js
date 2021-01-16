@@ -14,14 +14,15 @@ import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import * as API from "../api/endpoints"
 const localStorageUtils = require('../utils/local-store');
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
-
 class Profile extends React.Component {
+  _unsubscribe = false
   constructor(props) {
     super(props);
     this.state = {
@@ -39,11 +40,23 @@ class Profile extends React.Component {
   }
 
   async componentDidMount() {
+    const { navigation } = this.props;
+    this._unsubscribe = navigation.addListener('focus', async() => {      
+      console.log("[PROFILE]: UPDATE SCREEN WITH API");
+      const userFromLocal = await localStorageUtils.getUserFromLS();
+      const tokenCredential = await localStorageUtils.getTokenFromLS();
+      await this.getUserData(userFromLocal, tokenCredential.access_token);
+    });
+
     const userFromLocal = await localStorageUtils.getUserFromLS();
     const tokenCredential = await localStorageUtils.getTokenFromLS();
     // console.log(userFromLocal);
     // console.log(tokenCredential);
     await this.getUserData(userFromLocal, tokenCredential.access_token);
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
   navigateToScreen(screenName) {
@@ -67,7 +80,7 @@ class Profile extends React.Component {
       });
       // console.log(response);
       if (response.status === 200) {
-        console.log("load Profile success");
+        console.log("FETCH API (get User) SUCCESSFULLY");
         const userFetched = response.data;
         this.setState({ userInfo: userFetched })
         this.setState({
@@ -86,11 +99,11 @@ class Profile extends React.Component {
         await localStorageUtils.saveUserToLS(userFetched)
       }
     } catch (error) {
-      // console.log(error);
-      // console.log(error.response.data);
+      console.log(error);
+      console.log(error.response.data);
       // console.log(error.response.status);
       if (error.response) {
-        console.log("loi cmnr | Profile");
+        console.log("loi rui | Profile");
         if (error.response.status === 401 || error.response.status === 403) {
           //Tach 403/401 ra, neu gap 401 & 403 gi do thi vang ra bat dang nhap lai
           this.navigateToScreen('Login');
@@ -103,6 +116,7 @@ class Profile extends React.Component {
         }
         else if (error.response.status === 500) {
           //Server error, check return message and debug
+
         }
       }
       else if (error.message === 'Network Error') {
@@ -122,6 +136,7 @@ class Profile extends React.Component {
   }
 
   render() {
+    // const { isFocused } = this.props;
     return (
       <Block flex style={styles.profile}>
         <Block flex>
@@ -173,7 +188,7 @@ class Profile extends React.Component {
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      {this.state.firstName + ' ' + this.state.lastName}
+                      {this.state.lastName + ' ' + this.state.firstName}
                     </Text>
                   </Block>
                 </Block>
