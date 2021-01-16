@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.2",
+    "@react-native-community/datetimepicker": "3.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/bottom-tabs": "^5.0.6",
     "@react-navigation/compat": "^5.0.0",
@@ -31,10 +32,12 @@
     "react": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
     "react-native-gesture-handler": "~1.7.0",
+    "react-native-modal-datetime-picker": "^9.1.0",
     "react-native-modal-dropdown": "git+https://github.com/siemiatj/react-native-modal-dropdown.git",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
-    "react-native-screens": "~2.10.1"
+    "react-native-screens": "~2.10.1",
+    "react-native-toast-message": "^1.4.2"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.3.0"

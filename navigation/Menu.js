@@ -50,12 +50,17 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
       title: "Danh sách việc làm",
       route: "ListJobs"
     },
+    // {
+    //   title: "Chỉnh sửa trang cá nhân",
+    //   route: "EditProfile"
+    // }
   ]
   return (
     <Block
       style={styles.container}
       forceInset={{ top: 'always', horizontal: 'never' }}
     >
+
       <Block flex={0.06} style={styles.header}>
         <Image styles={styles.logo} source={Images.Logo} />
       </Block>

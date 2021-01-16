@@ -17,6 +17,8 @@ import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
 import Login from "../screens/Login";
 import ListJobs from "../screens/ListJobs";
+import EditProfile from "../screens/EditProfile";
+
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -24,6 +26,10 @@ import CustomDrawerContent from "./Menu";
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
+
+
+//Toast
+import Toast from 'react-native-toast-message';
 
 const { width } = Dimensions.get("screen");
 
@@ -44,7 +50,7 @@ function ElementsStack(props) {
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
       />
-            <Stack.Screen
+      <Stack.Screen
         name="Pro"
         component={Pro}
         options={{
@@ -78,7 +84,7 @@ function ArticlesStack(props) {
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
       />
-            <Stack.Screen
+      <Stack.Screen
         name="Pro"
         component={Pro}
         options={{
@@ -119,7 +125,25 @@ function ProfileStack(props) {
           headerTransparent: true
         }}
       />
-            <Stack.Screen
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              transparent
+              white
+              back
+              title="Chỉnh sửa hồ sơ"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: "#FFFFFF" },
+          headerTransparent: true
+        }}
+      />
+      <Stack.Screen
         name="Pro"
         component={Pro}
         options={{
@@ -177,12 +201,12 @@ function HomeStack(props) {
           headerTransparent: true
         }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="RecruitmentNews"
         component={RecruitmentNews}
         option={{
-          header: ({navigation, scene}) => (
-            <Header 
+          header: ({ navigation, scene }) => (
+            <Header
               title=""
               back
               white
@@ -252,6 +276,7 @@ function AppStack(props) {
       <Drawer.Screen name="Articles" component={ArticlesStack} />
       <Drawer.Screen name="ListJobs" component={ListJobs} />
       <Drawer.Screen name="RecruitmentNewsDetail" component={RecruitmentNews} />
+      <Drawer.Screen name="EditProfile" component={EditProfile} />
     </Drawer.Navigator>
   );
 }
