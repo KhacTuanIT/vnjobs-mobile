@@ -12,16 +12,17 @@ import { Block, Checkbox, Link, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { forwardRef } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+const localStorageUtils = require('../utils/local-store');
 
 import * as API from "../api/endpoints"
 const axios = require('axios').default;
 
 const { width, height } = Dimensions.get("screen");
 
-class Login extends React.Component { 
+class Login extends React.Component {
+  _unsubscribe = false
 
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       email: null,
@@ -33,13 +34,18 @@ class Login extends React.Component {
     }
   }
 
-  async checkValidUser(token){
+  navigateToSignUp() {
+    const { navigation } = this.props
+    return navigation.navigate("Register")
+  }
+
+  async checkValidUser(token) {
     const validStatusCode = 200;
 
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` 
+      Authorization: `Bearer ${token}`
     };
 
     try {
@@ -55,45 +61,46 @@ class Login extends React.Component {
     }
   }
 
-  getUserFromStore = async () => {
-    try {
-      const user = await AsyncStorage.getItem('user')
-      if(user !== null) {
-        // value previously stored
-        return JSON.parse(user);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  saveUserInfo = async (user) => {
-    try {
-      const userObj = JSON.stringify(user)
-      console.log(userObj);
-      await AsyncStorage.setItem('user', userObj)
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
-  }
-
   navigationToHome() {
-    const {navigation} = this.props
+    const { navigation } = this.props
     return navigation.navigate("Home")
   }
 
-  async componentDidMount(){
-    console.log("moi vao chay r");
-    const user = await this.getUserFromStore();
-    const token = user.access_token
-    const isValid = await this.checkValidUser(token)
-    // console.log(user.access_token);
-    console.log("LAST_CHECK");
-    console.log(isValid);
-    if(isValid){
+  async componentDidMount() {
+
+    const { navigation } = this.props;
+    this._unsubscribe = navigation.addListener('focus', async() => {      
+      console.log("[LOGIN]: CHECKED LOGGED IN OR NOT");
+      const tokenInfo = await localStorageUtils.getTokenFromLS();
+      let isValid;
+      if (tokenInfo) {
+        const token = tokenInfo.access_token
+        isValid = await this.checkValidUser(token)
+        // console.log(user.access_token);
+      }
+      if (isValid) {
+        console.log("CHECKED: | OK | LOGGED IN | REDIRECTING TO HOME");
+        this.navigationToHome()
+      }
+    });
+
+    console.log("LOGIN PAGE: CHECK LOGGED IN OR NOT");
+    // const user = await this.getUserFromStore();
+    const tokenInfo = await localStorageUtils.getTokenFromLS();
+    let isValid;
+    if (tokenInfo) {
+      const token = tokenInfo.access_token
+      isValid = await this.checkValidUser(token)
+      // console.log(user.access_token);
+    }
+    if (isValid) {
+      console.log("CHECKED: | OK | LOGGED IN | REDIRECTING TO HOME");
       this.navigationToHome()
     }
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
   async login(data) {
@@ -109,33 +116,61 @@ class Login extends React.Component {
         headers: headers,
         data,
       });
-      console.log(response.status);
+      // console.log(response.status);
       if (response.status === 200) {
         this.setState({ loginButtonText: 'SIGN IN' })
-        this.saveUserInfo(response.data)
+        const token = {
+          access_token: response.data.access_token,
+          expires_at: response.data.expires_at
+        }
+        await localStorageUtils.saveTokenToLS(token);
+        await localStorageUtils.saveUserToLS(response.data.user)
         this.navigationToHome()
       }
     } catch (error) {
       this.setState({ loginButtonText: 'SIGN IN' })
       console.log(error);
-      if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
-        this.showErrors('api-error')
+      console.log('hu' + error);
+      console.log(error.response);
+
+      console.log(error.message);
+      console.log(error == 'Network Error');
+      if (error.response) {
+        if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
+          this.showErrors('api-error', null);
+          this.setState({ isLoginFailed: true })
+          this.setState({ password: '' })
+          console.log("dang nhap ko thanh cong")
+        }
+        else if (error.response.status === 500) {
+          // console.log(error.response.data.message);
+          this.showErrors('api-error-500', error.response.data.message)
+          this.setState({ isLoginFailed: true })
+          console.log(`| Error msg: ${error.message} |`);
+        }
+      }
+      else if (error.message === 'Network Error') {
+        this.showErrors('network-error', null)
         this.setState({ isLoginFailed: true })
-        this.setState({ password: '' })
-        console.log("dang nhap ko thanh cong")
+        console.log(`| Error msg: ${error.message} |`);
       }
     }
   }
 
-  showErrors(type){
+  showErrors(type, msg = '') {
     switch (type) {
       case 'input-error':
-        this.setState({errorMessage :'Please enter your email or password!'})
+        this.setState({ errorMessage: 'Please enter your email or password!' })
         break;
       case 'api-error':
-        this.setState({errorMessage: 'Email or password are wrong!'})
+        this.setState({ errorMessage: 'Email or password are wrong!' })
         break;
-     
+      case 'network-error':
+        this.setState({ errorMessage: 'Error Network!' })
+        break;
+      default:
+        this.setState({ errorMessage: msg })
+
     }
   }
 
@@ -151,7 +186,7 @@ class Login extends React.Component {
       this.login(data)
     } else {
       this.setState({ isLoginFailed: true })
-      this.showErrors('input-error')
+      this.showErrors('input-error', null)
     }
 
   }
@@ -176,7 +211,7 @@ class Login extends React.Component {
                     this.state.isLoginFailed &&
                     <Text style={styles.notification} size={15}>
                       {this.state.errorMessage}
-                  </Text>
+                    </Text>
                   }
                   <KeyboardAvoidingView
                     style={{ flex: 1 }}
@@ -239,14 +274,14 @@ class Login extends React.Component {
                     </Block>
                     <Block middle style={styles.moreAboutAccount}>
                       <Text> You don't have account ? </Text>
-                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY}>
+                      <Text size={18} bold color={argonTheme.COLORS.PRIMARY}
+                        onPress={() => this.navigateToSignUp()}
+                      >
                         {" "}
                         Signup
                       </Text>
                     </Block>
                   </KeyboardAvoidingView>
-                </Block>
-              </Block>
               <Block flex={0.35} middle style={styles.socialConnect}>
                 <Text color="#8898AA" size={15}>
                   Or sign in with
@@ -278,6 +313,8 @@ class Login extends React.Component {
                   </Button>
                 </Block>
               </Block>
+                </Block>
+              </Block>
             </Block>
           </Block>
         </ImageBackground>
@@ -303,6 +340,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   socialConnect: {
+    width : width,
     backgroundColor: argonTheme.COLORS.WHITE,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: "#8898AA",
@@ -334,7 +372,7 @@ const styles = StyleSheet.create({
     paddingTop: 25,
     paddingBottom: 15,
     flex: 1,
-    height: 30,
+    height: 30, 
     alignItems: "center",
     justifyContent: "flex-end",
   },
