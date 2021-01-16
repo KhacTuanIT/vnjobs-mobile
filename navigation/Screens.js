@@ -24,6 +24,8 @@ import CustomDrawerContent from "./Menu";
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
+import * as API from "../api/endpoints"
+const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
 
