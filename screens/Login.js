@@ -282,8 +282,6 @@ class Login extends React.Component {
                       </Text>
                     </Block>
                   </KeyboardAvoidingView>
-                </Block>
-              </Block>
               <Block flex={0.35} middle style={styles.socialConnect}>
                 <Text color="#8898AA" size={15}>
                   Or sign in with
@@ -315,6 +313,8 @@ class Login extends React.Component {
                   </Button>
                 </Block>
               </Block>
+                </Block>
+              </Block>
             </Block>
           </Block>
         </ImageBackground>
@@ -340,6 +340,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   socialConnect: {
+    width : width,
     backgroundColor: argonTheme.COLORS.WHITE,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: "#8898AA",
@@ -371,7 +372,7 @@ const styles = StyleSheet.create({
     paddingTop: 25,
     paddingBottom: 15,
     flex: 1,
-    height: 30,
+    height: 30, 
     alignItems: "center",
     justifyContent: "flex-end",
   },
