@@ -6,6 +6,7 @@ import Header from './Header';
 import Input from './Input';
 import Switch from './Switch';
 import Select from './Select';
+import HightLight from './HightLight';
 
 export {
   Button,
@@ -15,5 +16,6 @@ export {
   Input,
   Header,
   Switch, 
-  Select
+  Select,
+  HightLight
 };
