@@ -50,10 +50,10 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
       title: "Danh sách việc làm",
       route: "ListJobs"
     },
-    {
-      title: "Chỉnh sửa trang cá nhân",
-      route: "EditProfile"
-    }
+    // {
+    //   title: "Chỉnh sửa trang cá nhân",
+    //   route: "EditProfile"
+    // }
   ]
   return (
     <Block

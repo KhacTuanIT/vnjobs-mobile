@@ -16,7 +16,7 @@ import { Select, Icon, Input, Header, Switch } from "../components/";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import * as API from "../api/endpoints"
-import localStorageUtils from '../utils/local-store';
+const localStorageUtils = require('../utils/local-store');
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Toast from 'react-native-toast-message';
 
@@ -29,6 +29,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 class EditProfile extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             first_name: null,
             last_name: null,
@@ -39,6 +40,28 @@ class EditProfile extends React.Component {
             bio: null,
             // social_facebook: null,
             // social_linkedin: null,
+
+            /*
+            * Errors 
+            */
+            errorsMessage: {
+                first_name: null,
+                last_name: null,
+                dob: null,
+                email: null,
+                phone: null,
+                address: null,
+                bio: null,
+            },
+            errorsState: {
+                first_name: false,
+                last_name: false,
+                dob: false,
+                email: false,
+                phone: false,
+                address: false,
+                bio: false,
+            },
             //
             userFromLocal: {},
             isDatePickerVisible: false,
@@ -48,21 +71,20 @@ class EditProfile extends React.Component {
     }
 
     async prepareData() {
-        const userLocal = await localStorageUtils.getUserFromStore();
+        const userLocal = await localStorageUtils.getUserFromLS();
         this.setState({
             userFromLocal: userLocal,
-            first_name: userLocal.user.first_name,
-            last_name: userLocal.user.last_name,
-            dob: userLocal.user.dob,
-            email: userLocal.user.email,
-            phone: userLocal.user.phone,
-            address: userLocal.user.address,
-            bio: userLocal.user.bio,
+            first_name: userLocal.first_name,
+            last_name: userLocal.last_name,
+            dob: userLocal.dob,
+            email: userLocal.email,
+            phone: userLocal.phone,
+            address: userLocal.address,
+            bio: userLocal.bio,
             // social_facebook: userLocal.user.social_facebook,
             // social_linkedin: userLocal.user.social_linkedin,
         })
     }
-
 
     handleConfirm = (date) => {
         this.setState({ isDatePickerVisible: false })
@@ -77,10 +99,12 @@ class EditProfile extends React.Component {
 
     async updateUserData() {
 
+        const tokenCredential = await localStorageUtils.getTokenFromLS()
+
         const headers = {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.state.userFromLocal.access_token}`,
+            Authorization: `Bearer ${tokenCredential.access_token}`,
         };
 
         try {
@@ -92,7 +116,7 @@ class EditProfile extends React.Component {
                     first_name: this.state.first_name,
                     last_name: this.state.last_name,
                     dob: this.state.dob,
-                    email: this.state.email,
+                    email: this.state.email.toLowerCase(),
                     phone: this.state.phone,
                     address: this.state.address,
                     bio: this.state.bio,
@@ -100,41 +124,97 @@ class EditProfile extends React.Component {
                     // social_linkedin: this.state.social_linkedin,
                 }
             });
-            console.log(response.status);
+            console.log(`[EditProfile]: Update user data | UPDATED SUCCESS | STATUS_CODE: ${response.status}|`);
             if (response.status === 200) {
-                console.log(response);
+                // console.log(response);
+                this.clearErrorState()
                 Toast.show({
+                    type: 'success',
                     text1: response.data.message,
                 });
             }
         } catch (error) {
-            this.setState({ loginButtonText: 'SIGN IN' })
-            console.log('Error: ' + error);
-            console.log(error.response);
-
-            console.log(error.message);
+            // console.log('Error: ' + error);
+            // console.log(error.response);
+            // console.log(error.message);
             if (error.response) {
-                if (error.response.status === 401 || error.response.status === 422 || error.response.status === 403) {
+                console.log(`\n[EditProfile]: Update user data | UPDATED FAILED | STATUS_CODE: ${error.response.status}| \n|MESSAGE ERROR: ${error.message}|\nERROR DATA: `);
+                console.log(error.response.data);
+
+                if (error.response.status === 401 || error.response.status === 403) {
 
                 }
-                else if (error.response.status === 500) {
+                else if (error.response.status === 422) {
+                    //Clear Previous error status/state
+                    this.clearErrorState()
+                    for (const [key, value] of Object.entries(error.response.data.errors)) {
+                        this.setState(prevState => ({
+                            errorsState: {
+                                ...prevState.errorsState,
+                                [key]: true,
+                            },
+                            errorsMessage: {
+                                ...prevState.errorsMessage,
+                                [key]: error.response.data.errors[key].toString()
+                            }
+                        }))
 
+                    }
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Update user information failed!',
+                    });
+                }
+                else if (error.response.status === 500) {
+                    console.log(error.response.data);
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Update user information failed!',
+                        text2: 'Error from server (500)'
+                    });
                 }
             }
             else if (error.message === 'Network Error') {
-
+                console.log(`[EditProfile]: Update user data | UPDATED FAILED | MESSAGE ERROR: ${error.message}`);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Update user information failed!',
+                    text2: 'Network error!)'
+                });
             }
         }
     }
 
-    componentDidMount(){}
+    clearErrorState() {
+        this.setState({
+            errorsMessage: {
+                first_name: null,
+                last_name: null,
+                dob: null,
+                email: null,
+                phone: null,
+                address: null,
+                bio: null,
+            },
+            errorsState: {
+                first_name: false,
+                last_name: false,
+                dob: false,
+                email: false,
+                phone: false,
+                address: false,
+                bio: false,
+            },
+        })
+    }
+    componentDidMount() { }
 
     render() {
         return (
             <Block flex style={styles.profile}>
-                <Block style={{zIndex: 9999999}}>
+                <Block style={{ zIndex: 9999999 }}>
                     <Toast ref={(ref) => Toast.setRef(ref)} />
-                    
+
                 </Block>
 
                 <Block flex>
@@ -167,9 +247,10 @@ class EditProfile extends React.Component {
                                             <Text bold size={18} color="#32325D">Email</Text>
                                             <Block style={styles.inputText}>
                                                 <Input
-                                                    error
+
+                                                    error={this.state.errorsState.email}
                                                     right
-                                                    placeholder="Error Input"
+                                                    placeholder="Email"
                                                     onChangeText={email => { this.setState({ email: email }) }}
                                                     value={this.state.email}
                                                     iconContent={
@@ -179,18 +260,20 @@ class EditProfile extends React.Component {
                                                                 width: 20,
                                                                 height: 20,
                                                                 borderRadius: 10,
-                                                                backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                                backgroundColor: argonTheme.COLORS.BASE
                                                             }}
                                                         >
                                                             <Icon
                                                                 size={11}
                                                                 color={argonTheme.COLORS.ICON}
-                                                                name="support"
-                                                                family="ArgonExtra"
+                                                                name="mail"
+                                                                family="AntDesign"
                                                             />
+
                                                         </Block>
                                                     }
                                                 />
+                                                {this.state.errorsState.email && <Text bold size={12} color="red">{this.state.errorsMessage.email}</Text>}
                                             </Block>
                                         </Block>
                                     </Block>
@@ -209,9 +292,9 @@ class EditProfile extends React.Component {
                                                 <Input
                                                     onChangeText={phone => { this.setState({ phone: phone }) }}
                                                     value={this.state.phone}
-                                                    error
+                                                    error={this.state.errorsState.phone}
                                                     right
-                                                    placeholder="Error Input"
+                                                    placeholder="Phone number"
                                                     iconContent={
                                                         <Block
                                                             middle
@@ -219,18 +302,19 @@ class EditProfile extends React.Component {
                                                                 width: 20,
                                                                 height: 20,
                                                                 borderRadius: 10,
-                                                                backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                                backgroundColor: argonTheme.COLORS.BASE
                                                             }}
                                                         >
                                                             <Icon
                                                                 size={11}
                                                                 color={argonTheme.COLORS.ICON}
-                                                                name="support"
-                                                                family="ArgonExtra"
+                                                                name="phone"
+                                                                family="AntDesign"
                                                             />
                                                         </Block>
                                                     }
                                                 />
+                                                {this.state.errorsState.phone && <Text bold size={12} color="red">{this.state.errorsMessage.phone}</Text>}
                                             </Block>
                                         </Block>
                                     </Block>
@@ -249,9 +333,9 @@ class EditProfile extends React.Component {
                                             <Input
                                                 onChangeText={last_name => { this.setState({ last_name: last_name }) }}
                                                 value={this.state.last_name}
-                                                error
+                                                error={this.state.errorsState.last_name}
                                                 right
-                                                placeholder="Error Input"
+                                                placeholder="Last name"
                                                 iconContent={
                                                     <Block
                                                         middle
@@ -259,26 +343,28 @@ class EditProfile extends React.Component {
                                                             width: 20,
                                                             height: 20,
                                                             borderRadius: 10,
-                                                            backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                            backgroundColor: argonTheme.COLORS.BASE
                                                         }}
                                                     >
                                                         <Icon
                                                             size={11}
                                                             color={argonTheme.COLORS.ICON}
-                                                            name="support"
-                                                            family="ArgonExtra"
+                                                            name="idcard"
+                                                            family="AntDesign"
                                                         />
                                                     </Block>
                                                 }
                                             />
+                                            {this.state.errorsState.last_name && <Text bold size={12} color="red">{this.state.errorsMessage.last_name}</Text>}
+
                                         </Block>
                                         <Block style={styles.divisionTwoInput}>
                                             <Input
                                                 onChangeText={first_name => { this.setState({ first_name: first_name }) }}
                                                 value={this.state.first_name}
-                                                error
+                                                error={this.state.errorsState.first_name}
                                                 right
-                                                placeholder="Error Input"
+                                                placeholder="First name"
                                                 iconContent={
                                                     <Block
                                                         middle
@@ -286,18 +372,19 @@ class EditProfile extends React.Component {
                                                             width: 20,
                                                             height: 20,
                                                             borderRadius: 10,
-                                                            backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                            backgroundColor: argonTheme.COLORS.BASE
                                                         }}
                                                     >
                                                         <Icon
                                                             size={11}
                                                             color={argonTheme.COLORS.ICON}
-                                                            name="support"
-                                                            family="ArgonExtra"
+                                                            name="idcard"
+                                                            family="AntDesign"
                                                         />
                                                     </Block>
                                                 }
                                             />
+                                            {this.state.errorsState.first_name && <Text bold size={12} color="red">{this.state.errorsMessage.first_name}</Text>}
                                         </Block>
                                     </Block>
                                 </Block>
@@ -325,12 +412,12 @@ class EditProfile extends React.Component {
                                         </Text>
                                         <Block style={styles.inputText}>
                                             <View>
-                                                <Button title="Change DOB" onPress={() => this.showDatePicker()} />
+                                                {/* <Button title="Change DOB" onPress={() => this.showDatePicker()} /> */}
                                                 <Input
                                                     value={this.state.dob}
                                                     right
                                                     onPress={() => this.showDatePicker()}
-
+                                                    error={this.state.errorsState.dob}
                                                     iconContent={
                                                         <Block
                                                             middle
@@ -338,7 +425,7 @@ class EditProfile extends React.Component {
                                                                 width: 20,
                                                                 height: 20,
                                                                 borderRadius: 10,
-                                                                backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                                backgroundColor: argonTheme.COLORS.BASE
                                                             }}
                                                         >
                                                             <Icon
@@ -351,6 +438,7 @@ class EditProfile extends React.Component {
                                                         </Block>
                                                     }
                                                 />
+                                                {this.state.errorsState.dob && <Text bold size={12} color="red">{this.state.errorsMessage.dob}</Text>}
                                                 <DateTimePickerModal
                                                     // value={new Date()}
                                                     isVisible={this.state.isDatePickerVisible}
@@ -373,9 +461,9 @@ class EditProfile extends React.Component {
                                             <Input
                                                 onChangeText={address => { this.setState({ address: address }) }}
                                                 value={this.state.address}
-                                                error
+                                                error={this.state.errorsState.address}
                                                 right
-                                                placeholder="Error Input"
+                                                placeholder="Fill your address"
                                                 iconContent={
                                                     <Block
                                                         middle
@@ -383,18 +471,19 @@ class EditProfile extends React.Component {
                                                             width: 20,
                                                             height: 20,
                                                             borderRadius: 10,
-                                                            backgroundColor: argonTheme.COLORS.INPUT_ERROR
+                                                            backgroundColor: argonTheme.COLORS.BASE
                                                         }}
                                                     >
                                                         <Icon
                                                             size={11}
                                                             color={argonTheme.COLORS.ICON}
-                                                            name="support"
-                                                            family="ArgonExtra"
+                                                            name="location"
+                                                            family="Entypo"
                                                         />
                                                     </Block>
                                                 }
                                             />
+                                            {this.state.errorsState.last_name && <Text bold size={12} color="red">{this.state.errorsMessage.last_name}</Text>}
                                         </Block>
                                     </Block>
                                 </Block>
@@ -409,7 +498,7 @@ class EditProfile extends React.Component {
                                         // right
                                         onChangeText={bio => { this.setState({ bio: bio }) }}
                                         value={this.state.bio}
-                                        placeholder="Error Input"
+                                        placeholder="Enter your Bio"
                                         multiline={true}
                                         numberOfLines={10}
                                         iconContent={

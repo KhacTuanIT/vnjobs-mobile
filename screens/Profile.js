@@ -13,7 +13,7 @@ import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import * as API from "../api/endpoints"
-import localStorageUtils from '../utils/local-store';
+const localStorageUtils = require('../utils/local-store');
 
 const axios = require('axios').default;
 
@@ -39,9 +39,11 @@ class Profile extends React.Component {
   }
 
   async componentDidMount() {
-    const userFromLocal = await localStorageUtils.getUserFromStore();
-    console.log(userFromLocal);
-    await this.getUserData(userFromLocal.user, userFromLocal.access_token);
+    const userFromLocal = await localStorageUtils.getUserFromLS();
+    const tokenCredential = await localStorageUtils.getTokenFromLS();
+    // console.log(userFromLocal);
+    // console.log(tokenCredential);
+    await this.getUserData(userFromLocal, tokenCredential.access_token);
   }
 
   navigateToScreen(screenName) {
@@ -63,7 +65,7 @@ class Profile extends React.Component {
         url: `${API.USER}`,
         headers: headers,
       });
-      console.log(response);
+      // console.log(response);
       if (response.status === 200) {
         console.log("load Profile success");
         const userFetched = response.data;
@@ -81,12 +83,12 @@ class Profile extends React.Component {
         });
 
         //Save to localStorage user
-        await localStorageUtils.saveUserToStore(userFetched);
+        await localStorageUtils.saveUserToLS(userFetched)
       }
     } catch (error) {
-      console.log(error);
-      console.log(error.response.data);
-      console.log(error.response.status);
+      // console.log(error);
+      // console.log(error.response.data);
+      // console.log(error.response.status);
       if (error.response) {
         console.log("loi cmnr | Profile");
         if (error.response.status === 401 || error.response.status === 403) {
@@ -189,6 +191,12 @@ class Profile extends React.Component {
                     style={[styles.editBtn, styles.shadow]}
                     onPress={() => this.navigateToScreen('EditProfile')}
                   />
+                </Block>
+              </Block>
+              <Block flex style={styles.profileBlock}>
+                <Block style={styles.profileRow}>
+                  <Text style={styles.rowTextLeft} bold size={18} color="#333">Ngày sinh</Text>
+                  <Text style={styles.rowTextRight} size={16} color="#333">{this.state.dob}</Text>
                 </Block>
               </Block>
               <Block flex style={styles.profileBlock}>
@@ -335,7 +343,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   rowTextLeft: {
-    flex: 2
+    flex: 3
   },
   rowTextRight: {
     flex: 5,

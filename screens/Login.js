@@ -12,7 +12,7 @@ import { Block, Checkbox, Link, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { forwardRef } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+const localStorageUtils = require('../utils/local-store');
 
 import * as API from "../api/endpoints"
 const axios = require('axios').default;
@@ -60,45 +60,23 @@ class Login extends React.Component {
     }
   }
 
-  getUserFromStore = async () => {
-    try {
-      const user = await AsyncStorage.getItem('user')
-      if (user !== null) {
-        // value previously stored
-        return JSON.parse(user);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  saveUserInfo = async (user) => {
-    try {
-      const userObj = JSON.stringify(user)
-      await AsyncStorage.setItem('user', userObj)
-    } catch (e) {
-      // saving error
-      console.log(e);
-    }
-  }
-
   navigationToHome() {
     const { navigation } = this.props
     return navigation.navigate("Home")
   }
 
   async componentDidMount() {
-    console.log("moi vao chay r");
-    const user = await this.getUserFromStore();
+    console.log("LOGIN PAGE: CHECK LOGGED IN OR NOT");
+    // const user = await this.getUserFromStore();
+    const tokenInfo = await localStorageUtils.getTokenFromLS();
     let isValid;
-    if (user) {
-      const token = user.access_token
+    if (tokenInfo) {
+      const token = tokenInfo.access_token
       isValid = await this.checkValidUser(token)
       // console.log(user.access_token);
-      console.log("LAST_CHECK");
-      console.log(isValid);
     }
     if (isValid) {
+      console.log("CHECKED: | OK | LOGGED IN | REDIRECTING TO HOME");
       this.navigationToHome()
     }
   }
@@ -116,10 +94,15 @@ class Login extends React.Component {
         headers: headers,
         data,
       });
-      console.log(response.status);
+      // console.log(response.status);
       if (response.status === 200) {
         this.setState({ loginButtonText: 'SIGN IN' })
-        this.saveUserInfo(response.data)
+        const token = {
+          access_token: response.data.access_token,
+          expires_at: response.data.expires_at
+        }
+        await localStorageUtils.saveTokenToLS(token);
+        await localStorageUtils.saveUserToLS(response.data.user)
         this.navigationToHome()
       }
     } catch (error) {
