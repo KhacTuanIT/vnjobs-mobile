@@ -41,22 +41,30 @@ class Profile extends React.Component {
 
   async componentDidMount() {
     const { navigation } = this.props;
-    this._unsubscribe = navigation.addListener('focus', async() => {      
+    this._unsubscribe = navigation.addListener('focus', async() => {
       console.log("[PROFILE]: UPDATE SCREEN WITH API");
-      const userFromLocal = await localStorageUtils.getUserFromLS();
-      const tokenCredential = await localStorageUtils.getTokenFromLS();
-      await this.getUserData(userFromLocal, tokenCredential.access_token);
+      await this.syncOfflineAndFetchData()
     });
 
-    const userFromLocal = await localStorageUtils.getUserFromLS();
-    const tokenCredential = await localStorageUtils.getTokenFromLS();
+    await this.syncOfflineAndFetchData()
     // console.log(userFromLocal);
     // console.log(tokenCredential);
-    await this.getUserData(userFromLocal, tokenCredential.access_token);
   }
 
   componentWillUnmount() {
     this._unsubscribe();
+  }
+
+  async syncOfflineAndFetchData(){
+    /*
+    * Check logged or not, then countinue with same case.
+    */
+    const userFromLocal = await localStorageUtils.getUserFromLS();
+    const tokenCredential = await localStorageUtils.getTokenFromLS();
+    if(userFromLocal != undefined) {
+      return await this.getUserData(userFromLocal, tokenCredential.access_token);
+    }
+    else return this.navigateToScreen('Login') 
   }
 
   navigateToScreen(screenName) {
