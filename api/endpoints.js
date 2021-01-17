@@ -11,6 +11,6 @@ export const USER = API+'user';
 /**
  * Home page
  */
-export const LIST_ORGANIZATION = API + '/organizations'
-export const LIST_RECRUITMENT_NEWS = API + '/recruitment-news'
-export const LIST_MAJOR = API + '/majors'
+export const LIST_ORGANIZATION = API + 'organizations'
+export const LIST_RECRUITMENT_NEWS = API + 'recruitment-news'
+export const LIST_MAJOR = API + 'majors'
