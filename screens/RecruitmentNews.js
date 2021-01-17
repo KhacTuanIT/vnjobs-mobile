@@ -18,44 +18,140 @@ import { HeaderHeight } from "../constants/utils";
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
+import * as API from "../api/endpoints"
+import { or } from 'react-native-reanimated';
+const axios = require('axios').default;
   
+const localStorageUtils = require('../utils/local-store');
 // const { width } = Dimensions.get("screen");
 
 // const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
-const categories = [
-    {
-      title: "Music Album",
-      description:
-        "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-      image:
-        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
-      price: "$125"
-    },
-    {
-      title: "Events",
-      description:
-        "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-      image:
-        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-      price: "$35"
-    }
-];
 
 export default class RecruitmentNews extends Component {
     constructor(props) {
         super(props);
         this.state={
-            title:"Recruitment News"
+            titleApp:"Recruitment News",
+            orgId: 0,
+            authorId: 0,
+            majorId: 0,
+            title: '',
+            content: '',
+            address: '',
+            city: '',
+            startTime: null,
+            endTime: null,
+            interviewStartTime: null,
+            interviewEndTime: null,
+            author: '',
+            major: '',
+            organizationName: '',
+            organization: {
+                orgName: '',
+                phone: '',
+                description: '',
+                tax_id: '',
+                address: '',
+                logo: ''
+            }
         }
     }
     static navigationOptions = ({ navigation }) => {
         return {
-          title: this.state.title,
+          titleApp: this.state.title,
         };
     };
-    render() {
+
+    getData = async (url) => {
+
+        const headers = {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            // Authorization: `Bearer ${tokenCredential.access_token}`,
+        };
+        try {
+            const response = await axios({
+                method: 'GET',
+                url,
+                headers: headers,
+            });
+            return response
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    componentDidMount() {
+        this.prepareRecruitmentNews()
+    }
+
+    prepareRecruitmentNews = () => {
         
+        const {route, navigation} = this.props
+        const {news} = route.params
+        console.log(news)
+        this.setState({
+            orgId: news.org_id,
+            authorId: news.author_id,
+            majorId: news.major_id,
+            title: news.title,
+            content: news.content,
+            address: news.address,
+            city: news.city,
+            startTime: news.start_time,
+            endTime: news.end_time,
+            interviewStartTime: news.interview_start_time,
+            interviewEndTime: news.interview_end_time,
+        })
+
+        this.prepareExtraData()
+    }
+
+    prepareExtraData = () => {
+        const {authorId, majorId, orgId} = this.state;
+        if (orgId != 0) {
+            const url = `${API.LIST_ORGANIZATION}/${orgId}`
+            this.getData(url)
+            .then(res => this.setState({
+                organization: {
+                    res
+                },
+            })).catch(err => console.log("ERROR PREPARE RN: " + err))
+        }
+        else {
+            this.setState({
+                organizationName: 'Organization'
+            })
+        }
+        // if (authorId != 0) {
+        //     const url = `${API.USER}/${orgId}`
+        //     this.getData(url)
+        //     .then(res => this.setState({
+        //         author: res.first_name + res.last_name,
+        //     })).catch(err => console.log("ERROR PREPARE RN: " + err))
+        // }
+        // else {
+            this.setState({
+                author: 'Author'
+            })
+        // }
+        if (majorId != 0) {
+            const url = `${API.LIST_ORGANIZATION}/${majorId}`
+            this.getData(url)
+            .then(res => this.setState({
+                major: res.major_name,
+            })).catch(err => console.log("ERROR PREPARE RN: " + err))
+        }
+        else {
+            this.setState({
+                major: 'Major'
+            })
+        }
+    } 
+
+    render() {
+        const {organizationName, author, major, title, content, address, city, startTime, endTime, interviewStartTime, interviewEndTime} = this.state
         return (
             <Block flex style={styles.profile}>
                 <Block flex>
@@ -92,11 +188,11 @@ export default class RecruitmentNews extends Component {
                                 </Block>
                                 <Block flex>
                                     <Block middle>
-                                        <Text size={16} color={argonTheme.COLORS.TEXT} style={styles.companyName}>TT Technology Group</Text>
+                                        <Text size={16} color={argonTheme.COLORS.TEXT} style={styles.companyName}>{organizationName}</Text>
                                     </Block>
                                     <Block middle style={styles.nameInfo}>
                                         <Text bold size={22} color="#32325D">
-                                        Full-Stack ReactJS/NodeJS
+                                        {title}
                                         </Text>
                                         <Text size={18} color="#32325D" style={{ marginTop: 10 }}>
                                             <Icon 
@@ -104,7 +200,7 @@ export default class RecruitmentNews extends Component {
                                                 family="Ionicon"
                                                 size={18} 
                                                 // color="#77ff97"
-                                            /> Da Nang
+                                            /> {city}
                                         </Text>
                                     </Block>
                                 </Block>
@@ -114,7 +210,7 @@ export default class RecruitmentNews extends Component {
                                     <Text bold size={22} color="#777" style={styles.titleBlock}>
                                         Job Description
                                     </Text>
-                                    <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
+                                    {/* <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
                                         - Code from SPA to HTML/CSS/JS (required perfect pixel)
                                     </Text>
                                     <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
@@ -122,9 +218,9 @@ export default class RecruitmentNews extends Component {
                                     </Text>
                                     <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
                                         - Update Website content
-                                    </Text>
+                                    </Text> */}
                                     <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
-                                        - Do another thing that follow require
+                                        {content}
                                     </Text>
                                 </Block>
                             </Block>
@@ -199,7 +295,7 @@ export default class RecruitmentNews extends Component {
                                             Address
                                         </Text>
                                         <Text size={14} color="#32325D" style={styles.textFeature}>
-                                            123 Nui Thanh st, Hai Chau ds.
+                                            {address}
                                         </Text>
                                     </Block>
                                 </Block>
@@ -239,10 +335,18 @@ export default class RecruitmentNews extends Component {
                             <Block flex style={styles.jobIntroduction}>
                                 <Block middle style={styles.rowJobIntroductio}>
                                     <Text bold size={16} color="#777">
+                                        Start time for apply:
+                                    </Text>
+                                    <Text bold size={16} color="#dd325D" style={{ marginTop: 5 }}>
+                                        {startTime}
+                                    </Text>
+                                </Block>
+                                <Block middle style={styles.rowJobIntroductio}>
+                                    <Text bold size={16} color="#777">
                                         Expire apply:
                                     </Text>
                                     <Text bold size={16} color="#dd325D" style={{ marginTop: 5 }}>
-                                        12-02-2021
+                                        {endTime}
                                     </Text>
                                 </Block>
                             </Block>
