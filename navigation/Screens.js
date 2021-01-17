@@ -113,14 +113,15 @@ function ProfileStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               transparent
-              white
+              // white
+              back
               title="Hồ sơ cá nhân"
               navigation={navigation}
               scene={scene}
             />
           ),
-          cardStyle: { backgroundColor: "#FFFFFF" },
-          headerTransparent: true
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
         }}
       />
       <Stack.Screen
@@ -130,15 +131,15 @@ function ProfileStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               transparent
-              white
+              // white
               back
               title="Chỉnh sửa hồ sơ"
               navigation={navigation}
               scene={scene}
             />
           ),
-          cardStyle: { backgroundColor: "#FFFFFF" },
-          headerTransparent: true
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
         }}
       />
       <Stack.Screen
@@ -205,7 +206,7 @@ function HomeStack(props) {
         option={{
           header: ({ navigation, scene }) => (
             <Header
-              title=""
+              title="Chi tiết bài đăng"
               back
               white
               transparent
@@ -273,7 +274,7 @@ function AppStack(props) {
       <Drawer.Screen name="Elements" component={ElementsStack} />
       <Drawer.Screen name="Articles" component={ArticlesStack} />
       <Drawer.Screen name="ListJobs" component={ListJobs} />
-      <Drawer.Screen name="RecruitmentNewsDetail" component={RecruitmentNews} />
+      <Drawer.Screen name="RecruitmentNews" component={RecruitmentNews} />
       <Drawer.Screen name="EditProfile" component={EditProfile} />
     </Drawer.Navigator>
   );

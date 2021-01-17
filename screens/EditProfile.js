@@ -130,8 +130,9 @@ class EditProfile extends React.Component {
                 this.clearErrorState()
                 Toast.show({
                     type: 'success',
-                    position: 'top',
-                    topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                    position: 'bottom',
+                    autoHide: true,
+                    bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
                     visibilityTime: 2000,
                     text1: response.data.message,
                 });
@@ -166,8 +167,9 @@ class EditProfile extends React.Component {
                     }
                     Toast.show({
                         type: 'error',
-                        position: 'top',
-                        topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        position: 'bottom',
+                        autoHide: true,
+                        bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
                         visibilityTime: 2000,
                         text1: 'Cập nhật thất bại!',
                     });
@@ -176,8 +178,9 @@ class EditProfile extends React.Component {
                     console.log(error.response.data);
                     Toast.show({
                         type: 'error',
-                        position: 'top',
-                        topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        position: 'bottom',
+                        autoHide: true,
+                        bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
                         visibilityTime: 2000,                        
                         text1: 'Cập nhật thất bại!',
                         text2: 'Error from server (500)'
@@ -188,8 +191,9 @@ class EditProfile extends React.Component {
                 console.log(`[EditProfile]: Update user data | UPDATED FAILED | MESSAGE ERROR: ${error.message}`);
                 Toast.show({
                     type: 'error',
-                    position: 'top',
-                    topOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                    position: 'bottom',
+                    autoHide: true,
+                    bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
                     visibilityTime: 2000,
                     text1: 'Cập nhật thất bại!',
                     text2: 'Network error!',
@@ -225,7 +229,7 @@ class EditProfile extends React.Component {
     render() {
         return (
             <Block flex style={styles.profile}>
-                <Block style={{ zIndex: 999 }}>
+                <Block style={{ zIndex: 999, position: 'absolute', bottom: -70, left: 0, width: '100%' }}>
                     <Toast ref={(ref) => Toast.setRef(ref)} />
                 </Block>
                 <Block flex>
@@ -595,7 +599,7 @@ class EditProfile extends React.Component {
 
 const styles = StyleSheet.create({
     profile: {
-        marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
+        // marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
         // marginBottom: -HeaderHeight * 2,
         flex: 1
     },
