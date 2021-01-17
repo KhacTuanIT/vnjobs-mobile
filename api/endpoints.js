@@ -11,6 +11,6 @@ export const USER = API+'user';
 /**
  * Home page
  */
-export const LIST_ORGANIZATION = 'http://api.vnjobs.tk/api/v1/organizations'
-export const LIST_RECRUITMENT_NEWS = 'http://api.vnjobs.tk/api/v1/recruitment-news'
-export const LIST_MAJOR = 'http://api.vnjobs.tk/api/v1/majors'
+export const LIST_ORGANIZATION = API + '/organizations'
+export const LIST_RECRUITMENT_NEWS = API + '/recruitment-news'
+export const LIST_MAJOR = API + '/majors'

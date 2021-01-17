@@ -13,7 +13,6 @@ import * as API from "../api/endpoints"
 const axios = require('axios').default;
 
 class Home extends React.Component {
-  // _unsubscribe = false
   constructor(props) {
     super(props);
     this.state = {
@@ -44,58 +43,25 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    // const { navigation } = this.props;
-    // this._unsubscribe = navigation.addListener('focus', async() => {
-    //   console.log("[HOME]: UPDATE SCREEN WITH API");
-    //   if (this.state.organizations.length <= 0) {
-    //     console.log("Dang load ne")
-    //     await this.getAPI(API.LIST_ORGANIZATION)
-    //       .then(res => this.setState({
-    //         organizations: res,
-    //         isLoading: false
-    //       }))
-    //       .catch(error => console.log(error))
-    //   }
-    //   if (this.state.recruitmentNews.length <= 0) {
-    //     console.log("Load tiep ne")
-    //     await this.getAPI(API.LIST_RECRUITMENT_NEWS)
-    //       .then(res => this.setState({
-    //         recruitmentNews: res,
-    //         isLoading: false
-    //       }))
-    //       .catch(err => console.log(err))
-    //   }
-    //   if (this.state.majors.length <= 0) {
-    //     console.log("Load met nghi")
-    //     await this.getAPI(API.LIST_MAJOR)
-    //       .then(res => this.setState({
-    //         majors: res,
-    //         isLoading: false
-    //       }))
-    //       .catch(err => console.log(err))
-    //   }
-    // });
 
     if (this.state.organizations.length <= 0) {
-      console.log("Dang load ne")
+      console.log("[HOME] Fetch Organizations")
       this.getAPI(API.LIST_ORGANIZATION)
         .then(res => this.setState({
-          organizations: res,
-          isLoading: false
+          organizations: res
         }))
         .catch(error => console.log(error))
     }
     if (this.state.recruitmentNews.length <= 0) {
-      console.log("Load tiep ne")
+      console.log("[HOME] Fetch Recruitment news")
       this.getAPI(API.LIST_RECRUITMENT_NEWS)
         .then(res => this.setState({
-          recruitmentNews: res,
-          isLoading: false
+          recruitmentNews: res
         }))
         .catch(err => console.log(err))
     }
     if (this.state.majors.length <= 0) {
-      console.log("Load met nghi")
+      console.log("[HOME] Fetch Majors")
       this.getAPI(API.LIST_MAJOR)
         .then(res => this.setState({
           majors: res,
@@ -103,13 +69,7 @@ class Home extends React.Component {
         }))
         .catch(err => console.log(err))
     }
-    // console.log(userFromLocal);
-    // console.log(tokenCredential);
   }
-
-  // componentWillUnmount() {
-  //   this._unsubscribe();
-  // }
 
   renderItem = (value) => {
     var rs = null;
@@ -131,16 +91,18 @@ class Home extends React.Component {
     
   renderHightLight = (value) => {
     var rs = null;
+    const {majors} = this.state
     const data = value.data;
     if (data != null) {
       if (data.length > 0) {
         rs = data.map((item, index) => {
-          if (majors.data != null)
-            if (majors.data.length > 0)
-              if (item.major_id == majors.data[0].id)
-                return (
-                  <HightLight item={item} key={index} />
-                )
+          if (majors != null)
+            if (majors.data != null)
+              if (majors.data.length > 0)
+                if (item.major_id == majors.data[0].id)
+                  return (
+                    <HightLight item={item} key={index} />
+                  )
           return (
             <HightLight item={item} key={index} />
           )
