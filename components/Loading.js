@@ -1,11 +1,14 @@
 import React from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
-export default function Loading() {
+export default function Loading(props) {
+    const message = () => {
+        return props.message ? props.message : 'Đang tải dữ liệu ....'
+    }
     return (
         <View style={styles.wrapper}>
             <ActivityIndicator size="large" color="#0000ff" />
-            <Text>Đang tải dữ liệu ....</Text>
+            <Text>{message()}</Text>
         </View>
     )
 }
