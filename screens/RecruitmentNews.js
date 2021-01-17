@@ -46,7 +46,10 @@ export default class RecruitmentNews extends Component {
             interviewEndTime: null,
             author: '',
             major: '',
+            workType: '',
             organizationName: '',
+            startDateApply: '',
+            endDateApply: '',
             organization: {
                 orgName: '',
                 phone: '',
@@ -90,7 +93,11 @@ export default class RecruitmentNews extends Component {
         
         const {route, navigation} = this.props
         const {news} = route.params
-        console.log(news)
+        
+        const startDateApply = this.renderDateTime(news.start_time)
+        const endDateApply = this.renderDateTime(news.end_time)
+        const interviewStartTime = this.renderDateTime(news.interview_start_time)
+        const interviewEndTime = this.renderDateTime(news.interview_end_time)
         this.setState({
             orgId: news.org_id,
             authorId: news.author_id,
@@ -101,23 +108,40 @@ export default class RecruitmentNews extends Component {
             city: news.city,
             startTime: news.start_time,
             endTime: news.end_time,
-            interviewStartTime: news.interview_start_time,
-            interviewEndTime: news.interview_end_time,
+            workType: news.work_type,
+            interviewStartTime,
+            interviewEndTime,
+            startDateApply,
+            endDateApply
         })
-
-        this.prepareExtraData()
+        
+        this.prepareExtraData(news.author_id, news.major_id, news.org_id)
     }
 
-    prepareExtraData = () => {
-        const {authorId, majorId, orgId} = this.state;
+    prepareExtraData = (authorId, majorId, orgId) => {
+        var organization = {   
+            orgName: '',
+            phone: '',
+            description: '',
+            tax_id: '',
+            address: '',
+            logo: ''
+        }
         if (orgId != 0) {
             const url = `${API.LIST_ORGANIZATION}/${orgId}`
             this.getData(url)
-            .then(res => this.setState({
-                organization: {
-                    res
-                },
-            })).catch(err => console.log("ERROR PREPARE RN: " + err))
+            .then(res => {
+                this.setState({
+                    organization :{
+                        orgName: res.data.org_name,
+                        phone: res.data.phone,
+                        description: res.data.description,
+                        tax_id: res.data.tax_id,
+                        address: res.data.address,
+                        logo: res.data.logo_path
+                    }
+                })
+            }).catch(err => console.log("ERROR PREPARE RN: " + err))
         }
         else {
             this.setState({
@@ -125,11 +149,14 @@ export default class RecruitmentNews extends Component {
             })
         }
         // if (authorId != 0) {
-        //     const url = `${API.USER}/${orgId}`
+        //     const url = `${API.USER}/${authorId}`
         //     this.getData(url)
-        //     .then(res => this.setState({
-        //         author: res.first_name + res.last_name,
-        //     })).catch(err => console.log("ERROR PREPARE RN: " + err))
+        //     .then(res => {
+        //         console.log(res)
+        //         this.setState({
+        //             author: res.data.first_name + res.data.last_name,
+        //         })
+        //     }).catch(err => console.log("ERROR PREPARE RN: " + err))
         // }
         // else {
             this.setState({
@@ -150,8 +177,43 @@ export default class RecruitmentNews extends Component {
         }
     } 
 
+    renderDateTime = (date) => {
+        var t = date.split(/[- :]/);
+        var d = new Date(Date.UTC(t[0], t[1]-1, t[2], t[3], t[4], t[5]));
+        return this.getNumberFromDate(d.getDate()) + "-" + this.getNumberFromMonth(d.getMonth()) + "-" + d.getFullYear()
+    }
+
+    getNumberFromDate = (index) => {
+        const days = [ '00',
+                '01', '02', '03', '04', '05', '06', '07', '08', '09', 
+                '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', 
+                '10', '21', '22', '23', '24', '25', '26', '27', '28', '29', 
+                '30', '31']
+        return days[index]
+    }
+
+    getNumberFromMonth = (index) => {
+        const months = [
+                '01', '02', '03', '04', '05', '06', '07', '08', '09', 
+                '10', '11', '12']
+        return months[index]
+    }
+
     render() {
-        const {organizationName, author, major, title, content, address, city, startTime, endTime, interviewStartTime, interviewEndTime} = this.state
+        const {
+            organizationName, 
+            author, 
+            major, 
+            title, 
+            workType, 
+            content, 
+            address, 
+            city, 
+            startDateApply, 
+            endDateApply, 
+            interviewStartTime, 
+            interviewEndTime, 
+            organization} = this.state
         return (
             <Block flex style={styles.profile}>
                 <Block flex>
@@ -182,13 +244,13 @@ export default class RecruitmentNews extends Component {
                                         <Button
                                         style={{ backgroundColor: argonTheme.COLORS.INFO }}
                                         >
-                                            COMPANY'S INFORMATION
+                                            Chi tiết công ty
                                         </Button>
                                     </Block>
                                 </Block>
                                 <Block flex>
                                     <Block middle>
-                                        <Text size={16} color={argonTheme.COLORS.TEXT} style={styles.companyName}>{organizationName}</Text>
+                                        <Text size={16} color={argonTheme.COLORS.TEXT} style={styles.companyName}>{organization.orgName != '' ? organization.orgName : organizationName}</Text>
                                     </Block>
                                     <Block middle style={styles.nameInfo}>
                                         <Text bold size={22} color="#32325D">
@@ -202,13 +264,21 @@ export default class RecruitmentNews extends Component {
                                                 // color="#77ff97"
                                             /> {city}
                                         </Text>
+                                        <Text size={18} color="#32325D" style={{ marginTop: 10 }}>
+                                            <Icon 
+                                                name="thumb-tack"
+                                                family="Font-Awesome"
+                                                size={18} 
+                                                // color="#77ff97"
+                                            /> {author}
+                                        </Text>
                                     </Block>
                                 </Block>
                             </Block>
                             <Block flex style={styles.jobIntroduction}>
                                 <Block  style={styles.rowJobIntroductio}>
                                     <Text bold size={22} color="#777" style={styles.titleBlock}>
-                                        Job Description
+                                        Mô tả công việc
                                     </Text>
                                     {/* <Text size={16} color="#32325D" style={{ marginTop: 5 }}>
                                         - Code from SPA to HTML/CSS/JS (required perfect pixel)
@@ -224,7 +294,7 @@ export default class RecruitmentNews extends Component {
                                     </Text>
                                 </Block>
                             </Block>
-                            <Block flex style={styles.jobIntroduction}>
+                            {/* <Block flex style={styles.jobIntroduction}>
                                 <Block  style={styles.rowJobFeatures}>
                                     <Icon
                                         name="ios-wallet"
@@ -242,8 +312,8 @@ export default class RecruitmentNews extends Component {
                                         </Text>
                                     </Block>
                                 </Block>
-                            </Block>
-                            <Block flex style={styles.jobIntroduction}>
+                            </Block> */}
+                            {/* <Block flex style={styles.jobIntroduction}>
                                 <Block  style={styles.rowJobFeatures}>
                                     <Icon
                                         name="ios-ribbon"
@@ -261,7 +331,7 @@ export default class RecruitmentNews extends Component {
                                         </Text>
                                     </Block>
                                 </Block>
-                            </Block>
+                            </Block> */}
                             <Block flex style={styles.jobIntroduction}>
                                 <Block  style={styles.rowJobFeatures}>
                                     <Icon
@@ -273,10 +343,10 @@ export default class RecruitmentNews extends Component {
                                     />
                                     <Block  style={styles.rowFeatures}>
                                         <Text bold size={16} color="#777" style={[styles.titleFeature, styles.titleBlock]}>
-                                            Time
+                                            Tính chất công việc
                                         </Text>
                                         <Text size={14} color="#32325D" style={styles.textFeature}>
-                                            Full-time 
+                                            {workType}
                                         </Text>
                                     </Block>
                                 </Block>
@@ -292,7 +362,7 @@ export default class RecruitmentNews extends Component {
                                     />
                                     <Block  style={styles.rowFeatures}>
                                         <Text bold size={16} color="#777" style={[styles.titleFeature, styles.titleBlock]}>
-                                            Address
+                                            Địa chỉ
                                         </Text>
                                         <Text size={14} color="#32325D" style={styles.textFeature}>
                                             {address}
@@ -300,7 +370,7 @@ export default class RecruitmentNews extends Component {
                                     </Block>
                                 </Block>
                             </Block>
-                            <Block flex style={styles.jobIntroduction}>
+                            {/* <Block flex style={styles.jobIntroduction}>
                                 <Block middle style={styles.rowJobIntroductio}>
                                     <Text bold size={22} color="#777">
                                         Job Skill
@@ -318,8 +388,8 @@ export default class RecruitmentNews extends Component {
                                     </Block>
                                     
                                 </Block>
-                            </Block>
-                            <Block flex style={styles.jobIntroduction}>
+                            </Block> */}
+                            {/* <Block flex style={styles.jobIntroduction}>
                                 <Block  style={styles.rowJobIntroductio}>
                                     <Text bold size={22} color="#777" style={styles.titleBlock}>
                                         Benefit
@@ -331,22 +401,32 @@ export default class RecruitmentNews extends Component {
                                         - Its hands were holograms that altered to match the convolutions of the car’s floor.
                                     </Text>
                                 </Block>
-                            </Block>
+                            </Block> */}
                             <Block flex style={styles.jobIntroduction}>
                                 <Block middle style={styles.rowJobIntroductio}>
                                     <Text bold size={16} color="#777">
-                                        Start time for apply:
+                                        Thời gian nộp đơn:
                                     </Text>
                                     <Text bold size={16} color="#dd325D" style={{ marginTop: 5 }}>
-                                        {startTime}
+                                        {startDateApply}
                                     </Text>
                                 </Block>
                                 <Block middle style={styles.rowJobIntroductio}>
                                     <Text bold size={16} color="#777">
-                                        Expire apply:
+                                        Hạn nộp đơn:
                                     </Text>
                                     <Text bold size={16} color="#dd325D" style={{ marginTop: 5 }}>
-                                        {endTime}
+                                        {endDateApply}
+                                    </Text>
+                                </Block>
+                            </Block>
+                            <Block flex style={styles.jobIntroduction}>
+                                <Block middle style={styles.rowJobIntroductio}>
+                                    <Text bold size={16} color="#777">
+                                        Thời gian phỏng vấn:
+                                    </Text>
+                                    <Text bold size={16} color="#dd325D" style={{ marginTop: 5 }}>
+                                        {interviewStartTime} đến {interviewEndTime}
                                     </Text>
                                 </Block>
                             </Block>
