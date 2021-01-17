@@ -8,6 +8,8 @@ import Switch from './Switch';
 import Select from './Select';
 import HightLight from './HightLight';
 import Loading from './Loading';
+import HotMajor from './ListRecruitment/HotMajor';
+import LastestRecruitmentNews from './ListRecruitment/LastestRecruitmentNews';
 
 export {
   Button,
@@ -19,5 +21,7 @@ export {
   Switch, 
   Select,
   HightLight,
-  Loading
+  Loading,
+  HotMajor,
+  LastestRecruitmentNews,
 };
