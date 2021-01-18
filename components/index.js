@@ -9,7 +9,7 @@ import Select from './Select';
 import HightLight from './HightLight';
 import Loading from './Loading';
 import HotMajor from './ListRecruitment/HotMajor';
-import LastestRecruitmentNews from './ListRecruitment/LastestRecruitmentNews';
+import ListRecruitmentNews from './ListRecruitment/ListRecruitmentNews';
 
 export {
   Button,
@@ -23,5 +23,5 @@ export {
   HightLight,
   Loading,
   HotMajor,
-  LastestRecruitmentNews,
+  ListRecruitmentNews,
 };
