@@ -1,5 +1,5 @@
-const DOMAIN = 'http://api.vnjobs.tk';
-// const DOMAIN = 'http://127.0.0.1:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
+// const DOMAIN = 'http://api.vnjobs.tk';
+const DOMAIN = 'http://127.0.0.1:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
 const VERSION_API = '/api/v1/';
 const API = DOMAIN+VERSION_API;
 
@@ -13,4 +13,5 @@ export const USER = API+'user';
  */
 export const LIST_ORGANIZATION = API + 'organizations'
 export const LIST_RECRUITMENT_NEWS = API + 'recruitment-news'
+export const LIST_RECRUITMENT_NEWS_SORT_BY_MAJOR = API + 'recruitment-news-by-major'
 export const LIST_MAJOR = API + 'majors'

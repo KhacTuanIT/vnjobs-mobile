@@ -6,7 +6,6 @@ const { width } = Dimensions.get("screen");
 
 
 const renderMajorItem = (listMajor) => {
-    console.log(listMajor);
     if (listMajor == null || listMajor.length < 1) {
         return (<Block><Text style={{ paddingTop: 10, paddingBottom: 10 }}>Chưa có ngành nghề nào nổi bật</Text></Block>)
     }
@@ -21,7 +20,7 @@ const renderMajorItem = (listMajor) => {
                             </Block>
                             <Block style={styles.textGroup}>
                                 <Text style={styles.textMajor} >{item.major_name}</Text>
-                                <Text size={12} color={'#383838'} style={styles.textSlot}>150 Vị trí</Text>
+                                <Text size={12} color={'#383838'} style={styles.textSlot}>{item.job_left} Vị trí</Text>
                             </Block>
                         </Block>
                     )
@@ -37,8 +36,7 @@ const HotMajor = (props) => {
             <Text bold size={16}>NGÀNH NGHỀ NỔI BẬT</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
                 <Block flex row >
-                    {/* <Text>HotMajor</Text> */}
-                        {renderMajorItem(props.data)}
+                    {renderMajorItem(props.data)}
                 </Block>
             </ScrollView>
         </Block>
