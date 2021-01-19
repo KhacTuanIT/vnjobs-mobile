@@ -72,44 +72,50 @@ class Home extends React.Component {
   }
 
   renderItem = (value) => {
-    var rs = null;
-    
     if (value != null) {
+      var rs = null;
+    
+      if (value != null) {
+        const data = value.data;
+        if (data != null) {
+          if (data.length > 0) {
+            rs = data.map((item, index) => {
+              return (
+                <Card item={item} key={index} style={styles.cardItem} />
+              )
+            })
+          }
+        }
+      }
+      return (rs)
+    }
+    return null;
+  }
+    
+  renderHightLight = (value) => {
+    if (value != null) {
+      var rs = null;
+      const {majors} = this.state
       const data = value.data;
       if (data != null) {
         if (data.length > 0) {
           rs = data.map((item, index) => {
+            if (majors != null)
+              if (majors.data != null)
+                if (majors.data.length > 0)
+                  if (item.major_id == majors.data[0].id)
+                    return (
+                      <HightLight item={item} key={index} />
+                    )
             return (
-              <Card item={item} key={index} style={styles.cardItem} />
+              <HightLight item={item} key={index} />
             )
           })
         }
       }
+      return (rs)
     }
-    return (rs)
-  }
-    
-  renderHightLight = (value) => {
-    var rs = null;
-    const {majors} = this.state
-    const data = value.data;
-    if (data != null) {
-      if (data.length > 0) {
-        rs = data.map((item, index) => {
-          if (majors != null)
-            if (majors.data != null)
-              if (majors.data.length > 0)
-                if (item.major_id == majors.data[0].id)
-                  return (
-                    <HightLight item={item} key={index} />
-                  )
-          return (
-            <HightLight item={item} key={index} />
-          )
-        })
-      }
-    }
-    return (rs)
+    return null;
   }
 
   renderArticles = () => {

@@ -32,6 +32,7 @@ export default class RecruitmentNews extends Component {
     constructor(props) {
         super(props);
         this.state={
+            news: null,
             titleApp:"Recruitment News",
             orgId: 0,
             authorId: 0,
@@ -99,6 +100,7 @@ export default class RecruitmentNews extends Component {
         const interviewStartTime = this.renderDateTime(news.interview_start_time)
         const interviewEndTime = this.renderDateTime(news.interview_end_time)
         this.setState({
+            news,
             orgId: news.org_id,
             authorId: news.author_id,
             majorId: news.major_id,
@@ -199,8 +201,51 @@ export default class RecruitmentNews extends Component {
         return months[index]
     }
 
+    applyJob = async () => {
+        const tokenCredential = localStorageUtils.getTokenFromLS()
+        tokenCredential.access_token = tokenCredential.access_token != '' ? tokenCredential.access_token : '';
+        const headers = {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokenCredential.access_token}`,
+        };
+        const url = `${API.LIST_RECRUITMENT_NEWS}/${this.state.news.id}`
+        console.log(url)
+        try {
+            const response = await axios({
+                method: 'PUT',
+                url,
+                headers: headers,
+                data: {
+                    org_id: this.state.orgId,
+                    author_id: this.state.authorId,
+                    major_id: this.state.majorId,
+                    title: this.state.title,
+                }
+            });
+            return response
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    updateApplyJob = () => {
+        console.log("[OnUpdate]")
+        let rn = null
+        this.applyJob()
+            .then(res => {
+                console.log(res)
+                rn = res.recruitmentNews
+                if (rn != null) {
+                    console.log(res.message)
+                }
+            })
+            .catch(err => console.log(err))
+    }
+
     render() {
         const {
+            news,
             organizationName, 
             author, 
             major, 
@@ -214,6 +259,7 @@ export default class RecruitmentNews extends Component {
             interviewStartTime, 
             interviewEndTime, 
             organization} = this.state
+        console.log(news)
         return (
             <Block flex style={styles.profile}>
                 <Block flex>
@@ -434,7 +480,7 @@ export default class RecruitmentNews extends Component {
                             
                         </ScrollView>
                         <Block middle style={styles.blockApply}>
-                            <TouchableOpacity style={styles.btnApply} activeOpacity={0.5}>
+                            <TouchableOpacity style={styles.btnApply} activeOpacity={0.5} onPress={() => this.updateApplyJob()}>
                                 <Block flex middle style={styles.endApplyBlock}>
                                     <Icon style={styles.iconApply} name="ios-checkbox-outline" family="Ionicon" size={45} />
                                     <Text style={styles.textApply} bold size={16} color="#333">APPLY</Text>
