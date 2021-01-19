@@ -131,9 +131,9 @@ class Home extends React.Component {
             <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
           </TouchableOpacity>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrolls}>
-          <Block flex row style={styles.blockArticles}>
-            {this.renderItem(recruitmentNews) != null ? this.renderItem(recruitmentNews) : <Text>Không tìm thấy dữ liệu cho mục này</Text>}
-          </Block>
+            <Block flex row style={styles.blockArticles}>
+              {this.renderItem(recruitmentNews) != null ? this.renderItem(recruitmentNews) : <Text>Không tìm thấy dữ liệu cho mục này</Text>}
+            </Block>
           </ScrollView>
         </Block>
         <Block flex>
@@ -149,8 +149,8 @@ class Home extends React.Component {
         </Block>
         <Block flex>
           <Text style={styles.textHightlight}>Nổi bật dành cho bạn</Text> 
-          <ScrollView showsHorizontalScrollIndicator={false} style={styles.scrolls}>
-            <Block flex row style={styles.blockArticles}>
+          <ScrollView showsHorizontalScrollIndicator={false} style={[styles.scrolls, styles.scrollHightLight]}>
+            <Block flex row style={[styles.blockArticles, styles.hightLight]}>
               {this.renderHightLight(recruitmentNews) != null ? this.renderHightLight(recruitmentNews) : <Text>Không tìm thấy dữ liệu cho mục này</Text>}
             </Block>
           </ScrollView>
@@ -201,10 +201,18 @@ const styles = StyleSheet.create({
   },
   scrolls: {
     marginTop: 0,
-    paddingTop: 0
+    paddingTop: 0,
+  },
+  scrollHightLight: {
+    flexDirection: 'column'
   },
   blockArticles: {
-    // width: 500
+    // flex: 1,
+    // width: 500,
+  },
+  hightLight: {
+    flexDirection: 'column',
+    
   },
   cardItem: { 
     marginRight: theme.SIZES.BASE,

@@ -20,15 +20,16 @@ class HightLight extends Component {
         ];
         return (
             <Block row={horizontal} card flex style={cardContainer}>
-                <TouchableWithoutFeedback onPress={({route}) => navigation.navigate('RecruitmentNews', news={item})}>
+                <TouchableWithoutFeedback onPress={({route}) => navigation.navigate('RecruitmentNews', {news: item})}>
                 <Block flex style={imgContainer}>
-                    <Image source={{uri: item.image}} style={imageStyles} />
+                    <Image source={{uri: item.image ? item.image : 'http://auv.edu.vn/wp-content/uploads/2019/03/dot-jobs.jpg'}} style={imageStyles} />
                 </Block>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback style={styles.bottomCard} onPress={({route}) => navigation.navigate('RecruitmentNews', news={item})}>
+                <TouchableWithoutFeedback style={styles.bottomCard} onPress={({route}) => navigation.navigate('RecruitmentNews', {news: item})}>
                 <Block flex space="between" style={styles.cardDescription}>
                     <Block flex space="between" style={styles.titleText}>
                       <Text size={14} style={styles.cardTitle}>{item.title ?? item.org_name}</Text>
+                      <Text size={14} style={styles.cardTitle} color="#df3245">{item.start_time}</Text> 
                     </Block>
                     <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>Xem chi tiết</Text>
                 </Block>
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
 
     },
     titleText: {
-
+      flexDirection: 'row'
     },
     timeCard: {
       flexDirection: 'row'
@@ -65,7 +66,9 @@ const styles = StyleSheet.create({
       marginVertical: theme.SIZES.BASE,
       borderWidth: 0,
       minHeight: 150,
-      marginBottom: 16
+      marginBottom: 7,      
+      flex: 1,
+      minWidth: 350
     },
     cardTitle: {
       flex: 1,

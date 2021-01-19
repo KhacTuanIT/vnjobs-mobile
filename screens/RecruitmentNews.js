@@ -290,7 +290,9 @@ export default class RecruitmentNews extends Component {
                                         <Button
                                         style={{ backgroundColor: argonTheme.COLORS.INFO }}
                                         >
-                                            Chi tiết công ty
+                                            <Text size={16} bold color="#fff">
+                                                CHI TIẾT CÔNG TY
+                                            </Text>
                                         </Button>
                                     </Block>
                                 </Block>
