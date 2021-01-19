@@ -64,6 +64,7 @@ class Home extends React.Component {
       console.log("[HOME] Fetch Majors")
       this.getAPI(API.LIST_MAJOR)
         .then(res => this.setState({
+          
           majors: res,
           isLoading: false
         }))

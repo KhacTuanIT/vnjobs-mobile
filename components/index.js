@@ -7,6 +7,9 @@ import Input from './Input';
 import Switch from './Switch';
 import Select from './Select';
 import HightLight from './HightLight';
+import Loading from './Loading';
+import HotMajor from './ListRecruitment/HotMajor';
+import ListRecruitmentNews from './ListRecruitment/ListRecruitmentNews';
 
 export {
   Button,
@@ -17,5 +20,8 @@ export {
   Header,
   Switch, 
   Select,
-  HightLight
+  HightLight,
+  Loading,
+  HotMajor,
+  ListRecruitmentNews,
 };

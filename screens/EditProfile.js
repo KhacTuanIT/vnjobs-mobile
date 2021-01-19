@@ -11,7 +11,7 @@ import {
     Button
 } from "react-native";
 import { Block, Text, Button as GaButton, theme } from "galio-framework";
-import { Select, Icon, Input, Header, Switch } from "../components/";
+import { Select, Icon, Input, Header, Switch, Loading } from "../components/";
 
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
@@ -65,6 +65,7 @@ class EditProfile extends React.Component {
             //
             userFromLocal: {},
             isDatePickerVisible: false,
+            isLoading: false
         }
 
         this.prepareData()
@@ -107,6 +108,8 @@ class EditProfile extends React.Component {
             Authorization: `Bearer ${tokenCredential.access_token}`,
         };
 
+        this.setState({ isLoading: true });
+
         try {
             const response = await axios({
                 method: 'PUT',
@@ -142,6 +145,7 @@ class EditProfile extends React.Component {
             // console.log('Error: ' + error);
             // console.log(error.response);
             // console.log(error.message);
+            this.clearErrorState()
             if (error.response) {
                 console.log(`\n[EditProfile]: Update user data | UPDATED FAILED | STATUS_CODE: ${error.response.status}| \n|MESSAGE ERROR: ${error.message}|\nERROR DATA: `);
                 console.log(error.response.data);
@@ -151,7 +155,6 @@ class EditProfile extends React.Component {
                 }
                 else if (error.response.status === 422) {
                     //Clear Previous error status/state
-                    this.clearErrorState()
                     for (const [key, value] of Object.entries(error.response.data.errors)) {
                         this.setState(prevState => ({
                             errorsState: {
@@ -181,7 +184,7 @@ class EditProfile extends React.Component {
                         position: 'bottom',
                         autoHide: true,
                         bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
-                        visibilityTime: 2000,                        
+                        visibilityTime: 2000,
                         text1: 'Cập nhật thất bại!',
                         text2: 'Error from server (500)'
                     });
@@ -222,11 +225,12 @@ class EditProfile extends React.Component {
                 address: false,
                 bio: false,
             },
+            isLoading: false
         })
     }
     componentDidMount() { }
-
-    render() {
+    // { this.state.isLoading && <Loading/>}
+    renderEditForm() {
         return (
             <Block flex style={styles.profile}>
                 <Block style={{ zIndex: 999, position: 'absolute', bottom: -70, left: 0, width: '100%' }}>
@@ -237,11 +241,11 @@ class EditProfile extends React.Component {
                         source={Images.ProfileBackground}
                         style={styles.profileContainer}
                         imageStyle={styles.profileBackground}
-                    >
+                        >
                         <ScrollView
                             showsVerticalScrollIndicator={false}
                             style={{ width, marginTop: '25%' }}
-                        >
+                            >
                             <Block flex style={styles.profileCard}>
                                 <Block middle style={styles.avatarContainer}>
                                     <Image
@@ -589,11 +593,18 @@ class EditProfile extends React.Component {
                   </Block> */}
                         </ScrollView>
                     </ImageBackground>
-                
+
                 </Block>
             </Block>
-            
+
         );
+    }
+
+    render() {
+        if(this.state.isLoading){
+            return (<Loading message={'Đang cập nhật hồ sơ'} />)
+        }
+        else return this.renderEditForm()
     }
 }
 

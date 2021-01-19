@@ -14,4 +14,5 @@ export const USER = API+'user';
  */
 export const LIST_ORGANIZATION = API + 'organizations'
 export const LIST_RECRUITMENT_NEWS = API + 'recruitment-news'
+export const LIST_RECRUITMENT_NEWS_SORT_BY_MAJOR = API + 'recruitment-news-by-major'
 export const LIST_MAJOR = API + 'majors'
