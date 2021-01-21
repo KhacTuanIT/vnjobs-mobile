@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { Block, Icon, theme } from 'galio-framework';
+import { StyleSheet, Button, Dimensions, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { Block, Icon, Input, theme } from 'galio-framework';
 
 import {Card, HightLight} from '../components';
 // import CardOrganization from '../components/CardOrganization';
@@ -10,6 +10,7 @@ import ArButton from '../components/Button';
 import Loading from '../components/Loading';
 const { width } = Dimensions.get('screen');
 import * as API from "../api/endpoints"
+import ArInput from '../components/Input';
 const axios = require('axios').default;
 
 class Home extends React.Component {
@@ -19,7 +20,8 @@ class Home extends React.Component {
       isLoading: true,
       organizations: [],
       recruitmentNews: [],
-      majors: []
+      majors: [],
+      key: '',
     }
   }
 
@@ -37,6 +39,26 @@ class Home extends React.Component {
         headers
       })
       return response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  postAPI = async (url, data) => {
+
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url,
+        headers,
+        data
+      })
+      return response
     } catch (error) {
       console.log(error)
     }
@@ -119,6 +141,24 @@ class Home extends React.Component {
     return null;
   }
 
+  onSearch = () => {
+    const {route, navigation} = this.props
+    if (this.state.key != '' ) {
+      const data = {
+        'title': this.state.key,
+        'content': this.state.key,
+        'city': this.state.key,
+        'workType': this.state.key
+      }
+      const url = API.SEARCH;
+      this.postAPI(url, data)
+        .then(res => {
+          console.log(res.data.data)
+          // navigation.navigate('Search', {data: res.data.data, title: this.state.key})
+        }).catch(err => console.log(err))
+    }
+  }
+
   renderArticles = () => {
     const {organizations, recruitmentNews} = this.state
     return (
@@ -126,6 +166,16 @@ class Home extends React.Component {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.articles}>
         <Block flex>
+          <Block flex middle>
+            <ArInput 
+              value={(text) => {this.setState({key: text})}}
+            />
+            <TouchableOpacity style={styles.buttonSearch} onPress={() => this.onSearch()} >
+              <Text color='#fff' sizes={18}>Tìm kiếm ... </Text>
+            </TouchableOpacity>
+              
+          </Block>
+          
           <TouchableOpacity style={styles.moreBar}>
             <Text style={styles.textBar}>Bài tuyển dụng mới</Text>
             <Icon style={styles.buttonBar} name="ios-arrow-forward" family="Ionicon" sizes={16} color="#2254df"/>
@@ -234,6 +284,15 @@ const styles = StyleSheet.create({
   textHightlight: {
     fontSize: 17,
     color: '#575757'
+  },
+  buttonSearch: {
+    paddingHorizontal: 17,
+    paddingVertical: 8,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+    marginBottom: 15,
   }
 });
 

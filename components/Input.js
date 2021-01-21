@@ -21,7 +21,7 @@ class ArInput extends React.Component {
 
     return (
       <Input
-        placeholder="write something here"
+        placeholder="Tìm kiếm..."
         placeholderTextColor={argonTheme.COLORS.MUTED}
         style={inputStyles}
         color={argonTheme.COLORS.HEADER}
@@ -31,6 +31,7 @@ class ArInput extends React.Component {
             color={argonTheme.COLORS.ICON}
             name="link"
             family="AntDesign"
+            style={{marginRight: 10}}
           />
         }
         {...this.props}

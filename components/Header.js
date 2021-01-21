@@ -46,6 +46,12 @@ const SearchButton = ({isWhite, style, navigation}) => (
 );
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      key: '',
+    }
+  }
   handleLeftPress = () => {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
@@ -114,11 +120,11 @@ class Header extends React.Component {
         style={styles.search}
         placeholder="What are you looking for?"
         placeholderTextColor={'#8898AA'}
-        onEnter={() => navigation.navigate('Pro')}
         iconContent={<Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />}
       />
     );
   }
+
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
 

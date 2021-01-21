@@ -6,6 +6,7 @@ import { Card, Header, Button, HotMajor, ListRecruitmentNews } from "../componen
 import articles from "../constants/articles";
 import localStorageUtils from '../utils/local-store';
 import * as API from '../api/endpoints';
+import ArInput from "../components/Input";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
@@ -15,6 +16,7 @@ class ListJobs extends React.Component {
     isLoading: false,
     majors: null,
     recruitmentNews: null,
+    key: ''
   };
 
   async componentDidMount() {
@@ -116,17 +118,21 @@ class ListJobs extends React.Component {
 
   render() {
     const { recruitmentNews } = this.state
+    const {navigation, route} = this.props
     console.log("RECRUIT:STT||" + recruitmentNews);
     return (
       <Block flex center style={styles.home}>
-        <Block style={{ marginBottom: theme.SIZES.BASE }}>
+        {/* <Block style={{ marginBottom: theme.SIZES.BASE }}>
           <Header
-            tabs={tabs.categories}
+            // tabs={tabs.categories}
             search
+            // white
+            // transparent
             title="Danh sách việc làm"
             navigation={this.props.navigation}
+            scene={this.props.scene}
           />
-        </Block>
+        </Block> */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.articles}
@@ -149,7 +155,7 @@ class ListJobs extends React.Component {
           <Block style={styles.blockJobs}>
             {(recruitmentNews != null && recruitmentNews.length > 0) ?
               recruitmentNews.map((value, key) => {
-                return (<ListRecruitmentNews title={value.major_name} news={value.recruitment_news} key={key} />)
+                return (<ListRecruitmentNews navigation={navigation} route={route} title={value.major_name} news={value.recruitment_news} key={key} />)
               })
               : <ListRecruitmentNews title="Chưa có việc làm mới" />
             }

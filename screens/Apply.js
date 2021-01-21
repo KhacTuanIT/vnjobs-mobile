@@ -23,6 +23,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
 import * as API from '../api/endpoints'
 const axios = require('axios').default;
+import Toast from 'react-native-toast-message';
 
 export default class Apply extends Component {
     // const { isFocused } = this.props;
@@ -146,8 +147,34 @@ export default class Apply extends Component {
     }
 
     handleSendFile = () => {
+        const {route, navigation} = this.props;
         this.saveFile()
-            .then(res => console.log(res))
+            .then(res => {
+                if (res.status == 201) {
+                    Toast.show({
+                        type: 'info',
+                        position: 'bottom',
+                        autoHide: true,
+                        bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        visibilityTime: 2000,
+                        text1: 'Bạn đã ứng tuyển vào vị trí này!',
+                    });
+                }
+                else if (res.status == 200) {
+                    Toast.show({
+                        type: 'success',
+                        position: 'bottom',
+                        autoHide: true,
+                        bottomOffset: theme.SIZES.NAVBAR_HEIGHT + 15,
+                        visibilityTime: 2000,
+                        text1: 'Ứng tuyển thành công!',
+                        onHide: () => {
+                            navigation.goBack() 
+                        }
+                    });
+                               
+                }
+            })
             .catch(err => console.log(err))
     }
 
@@ -276,6 +303,7 @@ export default class Apply extends Component {
                     </ScrollView>
                     </ImageBackground>
                 </Block>
+                <Toast style={{zIndex: 99, position: 'absolute', bottom: -50}} ref={(ref) => Toast.setRef(ref)} />
             </Block>
         );
     }

@@ -23,11 +23,12 @@ import EditProfile from "../screens/EditProfile";
 import CustomDrawerContent from "./Menu";
 
 // header for screens
-import { Icon, Header } from "../components";
+import { Icon, Header, ListRecruitmentNews } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
 import * as API from "../api/endpoints"
 import Apply from "../screens/Apply";
+import SearchResult from "../screens/SearchResult";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
@@ -164,25 +165,61 @@ function ProfileStack(props) {
   );
 }
 
-function ApplyStack(props) {
+function ListJobsStack(props) {
   return (
     <Stack.Navigator initialRouteName="Apply" mode="card" headerMode="screen">
       <Stack.Screen
-        name="Apply"
-        component={Apply}
+        name="ListJobs"
+        component={ListJobs}
         options={{
           header: ({ navigation, scene }) => (
             <Header
               // transparent
               // white
-              back
-              title="Ứng tuyển"
+              // search
+              title="Danh sách bài đăng"
               navigation={navigation}
               scene={scene}
             />
           ),
           // headerTransparent: true,
           cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      <Stack.Screen
+        name="ListRecruitmentNews"
+        component={ListRecruitmentNews}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              // transparent
+              // white
+              // search
+              back
+              title="Danh sách bài đăng"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      <Stack.Screen
+        name="RecruitmentNews"
+        component={RecruitmentNews}
+        option={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Chi tiết bài đăng"
+              back
+              white
+              // transparent
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
         }}
       />
     </Stack.Navigator>
@@ -199,7 +236,7 @@ function HomeStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               title="Trang chủ"
-              tabs={tabs.jobs}
+              // tabs={tabs.jobs}
               navigation={navigation}
               scene={scene}
             />
@@ -233,7 +270,7 @@ function HomeStack(props) {
               title="Chi tiết bài đăng"
               back
               white
-              transparent
+              // transparent
               navigation={navigation}
               scene={scene}
             />
@@ -259,23 +296,23 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: "#FFFFFF" }
         }}
       />
-      {/* <Stack.Screen 
-        name="Apply"
-        component={Apply}
-        option={{
+      <Stack.Screen
+        name="Search"
+        component={SearchResult}
+        options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Ứng tuyển"
               back
-              white
-              transparent
+              title="Tìm kiếm"
               navigation={navigation}
               scene={scene}
             />
           ),
-          headerTransparent: true
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
         }}
-      /> */}
+      />
+      
     </Stack.Navigator>
   );
 }
@@ -332,7 +369,7 @@ function AppStack(props) {
       <Drawer.Screen name="Login" component={Login} />
       <Drawer.Screen name="Elements" component={ElementsStack} />
       <Drawer.Screen name="Articles" component={ArticlesStack} />
-      <Drawer.Screen name="ListJobs" component={ListJobs} />
+      <Drawer.Screen name="ListJobs" component={ListJobsStack} />
       <Drawer.Screen name="RecruitmentNews" component={RecruitmentNews} />
       <Drawer.Screen name="EditProfile" component={EditProfile} />
       {/* <Drawer.Screen name="Apply" component={ApplyStack} /> */}
