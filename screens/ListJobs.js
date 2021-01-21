@@ -168,6 +168,7 @@ class ListJobs extends React.Component {
 const styles = StyleSheet.create({
   home: {
     width: width,
+    backgroundColor: '#F1F2F1',
   },
   articles: {
     width: width - theme.SIZES.BASE * 2,
