@@ -244,7 +244,7 @@ class EditProfile extends React.Component {
                         >
                         <ScrollView
                             showsVerticalScrollIndicator={false}
-                            style={{ width, marginTop: '25%' }}
+                            style={{ width, marginTop: '10%' }}
                             >
                             <Block flex style={styles.profileCard}>
                                 <Block middle style={styles.avatarContainer}>
