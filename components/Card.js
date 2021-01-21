@@ -25,7 +25,7 @@ class Card extends React.Component {
       <Block row={horizontal} card flex style={cardContainer}>
         <TouchableWithoutFeedback onPress={({route}) => navigation.navigate('RecruitmentNews', {news: item})}>
           <Block flex style={imgContainer}>
-            <Image source={{uri: item.image}} style={imageStyles} />
+            <Image source={{uri: item.image ? item.image : 'http://auv.edu.vn/wp-content/uploads/2019/03/dot-jobs.jpg'}} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback style={styles.bottomCard} onPress={({route}) => navigation.navigate('RecruitmentNews', {news: item})}>

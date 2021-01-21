@@ -27,6 +27,7 @@ import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
 import * as API from "../api/endpoints"
+import Apply from "../screens/Apply";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
@@ -163,7 +164,30 @@ function ProfileStack(props) {
   );
 }
 
-
+function ApplyStack(props) {
+  return (
+    <Stack.Navigator initialRouteName="Apply" mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Apply"
+        component={Apply}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              // transparent
+              // white
+              back
+              title="Ứng tuyển"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function HomeStack(props) {
   return (
@@ -217,6 +241,41 @@ function HomeStack(props) {
           headerTransparent: true
         }}
       />
+      <Stack.Screen
+        name="Apply"
+        component={Apply}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              // transparent
+              // white
+              back
+              title="Ứng tuyển"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      {/* <Stack.Screen 
+        name="Apply"
+        component={Apply}
+        option={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Ứng tuyển"
+              back
+              white
+              transparent
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
+        }}
+      /> */}
     </Stack.Navigator>
   );
 }
@@ -276,6 +335,8 @@ function AppStack(props) {
       <Drawer.Screen name="ListJobs" component={ListJobs} />
       <Drawer.Screen name="RecruitmentNews" component={RecruitmentNews} />
       <Drawer.Screen name="EditProfile" component={EditProfile} />
+      {/* <Drawer.Screen name="Apply" component={ApplyStack} /> */}
+      
     </Drawer.Navigator>
   );
 }
