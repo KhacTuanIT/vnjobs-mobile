@@ -244,7 +244,7 @@ class EditProfile extends React.Component {
                         >
                         <ScrollView
                             showsVerticalScrollIndicator={false}
-                            style={{ width, marginTop: '25%' }}
+                            style={{ width, marginTop: '10%' }}
                             >
                             <Block flex style={styles.profileCard}>
                                 <Block middle style={styles.avatarContainer}>
@@ -636,7 +636,9 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 0 },
         shadowRadius: 8,
         shadowOpacity: 0.2,
-        zIndex: 2
+        zIndex: 2,
+        elevation: 6
+
     },
     info: {
         paddingHorizontal: 40
