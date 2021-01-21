@@ -3,8 +3,6 @@ import { ActivityIndicator, StyleSheet, View, ScrollView, Dimensions, Image } fr
 // import {Icon} from '../Icon';
 import { Block, theme, Text, Icon } from 'galio-framework';
 import { get } from 'react-native/Libraries/Utilities/PixelRatio';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { withNavigation } from '@react-navigation/compat';
 var timediff = require('timediff');
 const { width } = Dimensions.get("screen");
 
@@ -14,17 +12,16 @@ const getDateLeft = (date) => {
     return (dayLeft.days.toString().split('-'))
 }
 
-const ListRecruitmentNews = (props) => {
-    const { title, news, navigation, route } = props
+const RecruitmentNewsSearchResult = (props) => {
+    const { title, news } = props
     if (news != null) {
         return (
             <Block flex style={styles.blockLastestJobs} >
-                <Text style={{ paddingBottom: 25, textTransform: 'uppercase' }} bold size={16}>Việc làm theo ngành {title}</Text>
+                <Text style={{ paddingBottom: 25, textTransform: 'uppercase' }} bold size={16}>Kết quả cho {title}</Text>
                 {
-                    news.map((job, key) => { 
+                    news.map((job, key) => {
                         return (
-                            //<TouchableOpacity style={styles.jobItem} key={key} onPress={({route}) => navigation.navigate('RecruitmentNews', {news: news[key]})}> 
-                            <TouchableOpacity style={styles.jobItem} key={key} onPress={ () =>  {navigation.navigate('RecruitmentNews', {news: news[key]}) }}> 
+                            <Block style={styles.jobItem} key={key}>
                                 <Block style={styles.wrapImg}>
                                     <Image
                                         style={styles.logoOrg}
@@ -39,7 +36,7 @@ const ListRecruitmentNews = (props) => {
                                     <Text style={styles.text}>{job.org.org_name}</Text>
                                     <Text style={styles.text}>{job.city} - Còn lại {getDateLeft(job.end_time)} ngày</Text>
                                 </Block>
-                            </TouchableOpacity>
+                            </Block>
                         )
                     })
                 }
@@ -124,4 +121,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ListRecruitmentNews;
+export default RecruitmentNewsSearchResult;
