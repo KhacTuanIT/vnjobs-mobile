@@ -259,6 +259,7 @@ export default class RecruitmentNews extends Component {
             interviewStartTime, 
             interviewEndTime, 
             organization} = this.state
+        const {navigation, route} = this.props
         console.log(news)
         return (
             <Block flex style={styles.profile}>
@@ -482,7 +483,7 @@ export default class RecruitmentNews extends Component {
                             
                         </ScrollView>
                         <Block middle style={styles.blockApply}>
-                            <TouchableOpacity style={styles.btnApply} activeOpacity={0.5} onPress={() => this.updateApplyJob()}>
+                            <TouchableOpacity style={styles.btnApply} activeOpacity={0.5} onPress={({route}) => navigation.navigate('Apply', {item: news})}>
                                 <Block flex middle style={styles.endApplyBlock}>
                                     <Icon style={styles.iconApply} name="ios-checkbox-outline" family="Ionicon" size={45} />
                                     <Text style={styles.textApply} bold size={16} color="#333">APPLY</Text>
