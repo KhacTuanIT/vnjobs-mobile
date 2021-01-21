@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Button, Dimensions, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { Block, Icon, Input, theme } from 'galio-framework';
+import { Block, Icon, theme } from 'galio-framework';
 
-import {Card, HightLight} from '../components';
+import {Card, HightLight, Input} from '../components';
 // import CardOrganization from '../components/CardOrganization';
 import articles from '../constants/articles';
 import ArButton from '../components/Button';
@@ -10,7 +10,6 @@ import ArButton from '../components/Button';
 import Loading from '../components/Loading';
 const { width } = Dimensions.get('screen');
 import * as API from "../api/endpoints"
-import ArInput from '../components/Input';
 const axios = require('axios').default;
 
 class Home extends React.Component {
@@ -22,6 +21,7 @@ class Home extends React.Component {
       recruitmentNews: [],
       majors: [],
       key: '',
+      loadingSearching: false,
     }
   }
 
@@ -142,19 +142,18 @@ class Home extends React.Component {
   }
 
   onSearch = () => {
+    console.log(this.state.key)
+    this.setState({loadingSearching: true});
     const {route, navigation} = this.props
     if (this.state.key != '' ) {
       const data = {
-        'title': this.state.key,
-        'content': this.state.key,
-        'city': this.state.key,
-        'workType': this.state.key
+        city: this.state.key
       }
       const url = API.SEARCH;
       this.postAPI(url, data)
         .then(res => {
           console.log(res.data.data)
-          // navigation.navigate('Search', {data: res.data.data, title: this.state.key})
+          navigation.navigate('Search', {data: res.data.data, loading: this.state.loadingSearching})
         }).catch(err => console.log(err))
     }
   }
@@ -167,11 +166,12 @@ class Home extends React.Component {
         contentContainerStyle={styles.articles}>
         <Block flex>
           <Block flex middle>
-            <ArInput 
-              value={(text) => {this.setState({key: text})}}
+            <Input
+              onChangeText={key => {this.setState({key: key})}}
+              value={this.state.key}
             />
             <TouchableOpacity style={styles.buttonSearch} onPress={() => this.onSearch()} >
-              <Text color='#fff' sizes={18}>Tìm kiếm ... </Text>
+              <Text color='#777' sizes={18}>Tìm kiếm ... </Text>
             </TouchableOpacity>
               
           </Block>

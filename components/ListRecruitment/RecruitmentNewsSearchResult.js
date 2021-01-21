@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, View, ScrollView, Dimensions, Image } fr
 // import {Icon} from '../Icon';
 import { Block, theme, Text, Icon } from 'galio-framework';
 import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 var timediff = require('timediff');
 const { width } = Dimensions.get("screen");
 
@@ -13,64 +14,27 @@ const getDateLeft = (date) => {
 }
 
 const RecruitmentNewsSearchResult = (props) => {
-    const { title, news } = props
-    if (news != null) {
-        return (
-            <Block flex style={styles.blockLastestJobs} >
-                <Text style={{ paddingBottom: 25, textTransform: 'uppercase' }} bold size={16}>Kết quả cho {title}</Text>
-                {
-                    news.map((job, key) => {
-                        return (
-                            <Block style={styles.jobItem} key={key}>
-                                <Block style={styles.wrapImg}>
-                                    <Image
-                                        style={styles.logoOrg}
-                                        source={{
-                                            uri: 'https://snack-web-player.s3.us-west-1.amazonaws.com/v2/40/static/media/react-native-logo.79778b9e.png',
-                                        }}
-                                    />
-                                </Block>
-                                <Block style={styles.infoOrg}>
-                                    {/* 58 letters */}
-                                    <Text style={styles.text} bold size={15}>{job.title}</Text>
-                                    <Text style={styles.text}>{job.org.org_name}</Text>
-                                    <Text style={styles.text}>{job.city} - Còn lại {getDateLeft(job.end_time)} ngày</Text>
-                                </Block>
-                            </Block>
-                        )
-                    })
-                }
-                {
-                    news.length < 1 &&
-                    <Block center>
-                        <Text>Chưa có việc làm theo ngành {title}</Text>
-                    </Block>
-                }
-
+    const { news, navigation, route } = props
+    return (
+        <TouchableOpacity 
+            style={styles.jobItem} 
+            onPress={ () =>  {navigation.navigate('RecruitmentNews', {news: news}) }}
+        >
+            <Block style={styles.wrapImg}>
+                <Image
+                    style={styles.logoOrg}
+                    source={{
+                        uri: 'https://snack-web-player.s3.us-west-1.amazonaws.com/v2/40/static/media/react-native-logo.79778b9e.png',
+                    }}
+                />
             </Block>
-        )
-    }
-    else return (
-        <Block flex style={styles.blockLastestJobs}>
-            <Text style={{ paddingBottom: 25, textTransform: 'uppercase' }} bold size={16}>Chưa có ngành nghề nào</Text>
-            <Block style={styles.jobItem}>
-                <Block style={styles.wrapImg}>
-                    <Image
-                        style={styles.logoOrg}
-                        source={{
-                            uri: 'https://snack-web-player.s3.us-west-1.amazonaws.com/v2/40/static/media/react-native-logo.79778b9e.png',
-                        }}
-                    />
-                </Block>
-                <Block style={styles.infoOrg}>
-                    {/* 58 letters */}
-                    <Text style={styles.text} bold size={15}>sdsdsd</Text>
-                    <Text style={styles.text}>Phoenix Vietnam Co, Ltd</Text>
-                    <Text style={styles.text}>Đà Nẵng</Text>
-                </Block>
+            <Block style={styles.infoOrg}>
+                <Text style={styles.text} bold size={15}>{news.title}</Text>
+                <Text style={styles.text}>{news.org.org_name}</Text>
+                <Text style={styles.text}>{news.city} - Còn lại {getDateLeft(news.end_time)} ngày</Text>
             </Block>
-        </Block>
-    );
+        </TouchableOpacity>
+    )
 }
 
 const styles = StyleSheet.create({

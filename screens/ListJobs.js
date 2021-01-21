@@ -148,6 +148,7 @@ class ListJobs extends React.Component {
               iconColor={"black"}
               textStyle={{ color: "black" }}
               style={styles.filterButton}
+              onPress={() => navigation.navigate('FilterScreen')}
             >
               Filter
             </Button>
