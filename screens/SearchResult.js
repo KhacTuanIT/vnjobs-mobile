@@ -7,59 +7,116 @@ import articles from "../constants/articles";
 import localStorageUtils from '../utils/local-store';
 import * as API from '../api/endpoints';
 import ArInput from "../components/Input";
-import RecruitmentNewsSearchResult from "../components/ListRecruitment/RecruitmentNewsSearchResult";
+import { RecruitmentNewsSearchResult } from "../components";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
 
 class SearchResult extends React.Component {
 
+
+
+  /*
+  renderContent() {
+    const { route, navigation } = this.props
+    const { data, loading } = route.params
+    const recruitmentNews = data
+
+    console.log(recruitmentNews);
+
+    console.log("===========");
+
+    console.log(loading); //temp_
+
+    if (recruitmentNews) {
+      recruitmentNews.map((value, key) => {
+        console.log('run_in_here');
+        return (
+          <Block>
+              <Text>{value.title}</Text>
+          </Block>
+
+        )
+      })
+    }
+    else {
+      return (<Text>No Result found.</Text>)
+    }
+
+  }
+  */
   render() {
-    const {route, navigation} = this.props
-    const {data, title} = route.params
-    const recruitmentNews = data.data
-    console.log(recruitmentNews)
+    /*
+    const renderContent = () => {
+      const {route, navigation} = this.props
+      const {data, loading} = route.params
+      const recruitmentNews = data.data.data
+      if (recruitmentNews != null) {
+        if (recruitmentNews.length > 0) {
+          console.log(recruitmentNews)
+          var rs = null
+          rs = recruitmentNews.map((news, index) => {
+            return (
+              <RecruitmentNewsSearchResult 
+                key={index}
+                news={news} 
+                navigation={navigation}
+                route={route}
+              />
+            )
+          })
+          return rs
+        }
+        return null
+      }
+      return null
+    }
+    */
+
+    const { route, navigation } = this.props
+    const { data, title } = route.params
+    const recruitmentNews = data
+    // console.log(recruitmentNews)
     return (
-        <Block flex center style={styles.home}>
-            <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header
-                // tabs={tabs.categories}
-                search
-                // white
-                // transparent
-                title="Danh sách việc làm"
-                navigation={this.props.navigation}
-                scene={this.props.scene}
-            />
-            </Block>
-            <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.articles}
+      <Block flex center style={styles.home}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.articles}
+        >
+          <Block row flex style={styles.filterBar}>
+            <Text style={styles.leftFilterText}>Kết quả tìm kiếm</Text>
+            <Button
+              small
+              icon="filter"
+              iconFamily="AntDesign"
+              color="transparent"
+              iconColor={"black"}
+              textStyle={{ color: "black" }}
+              style={styles.filterButton}
+              onPress={() => navigation.navigate('FilterScreen')}
             >
-            <Block row flex style={styles.filterBar}>
-                <Text style={styles.leftFilterText}>Kết quả tìm kiếm</Text>
-                <Button
-                small
-                icon="filter"
-                iconFamily="AntDesign"
-                color="transparent"
-                iconColor={"black"}
-                textStyle={{ color: "black" }}
-                style={styles.filterButton}
-                >
-                Filter
+              Filter
                 </Button>
-            </Block>
-            <Block style={styles.blockJobs}>
-                {(recruitmentNews != null && recruitmentNews.length > 0) ?
-                recruitmentNews.map((value, key) => {
-                    return (<RecruitmentNewsSearchResult title={title} news={value} key={key} />)
+          </Block>
+          <Block style={styles.blockJobs}>
+            { 
+              recruitmentNews &&
+                recruitmentNews.map((value, id) => {
+                  console.log('run_in_here');
+                  return (
+                    <RecruitmentNewsSearchResult 
+                      key={id}
+                      news={recruitmentNews[id]}
+                      navigation={navigation}
+                      route={route}
+                    />
+          
+                  )
                 })
-                : <RecruitmentNewsSearchResult title="Chưa có việc làm mới" />
-                }
-            </Block>
-            </ScrollView>
-        </Block>
+              }
+          </Block>
+        </ScrollView>
+      </Block>
     );
   }
 }
@@ -86,6 +143,7 @@ const styles = StyleSheet.create({
   blockJobs: {
     // marginTop: 20,
     // paddingBottom: 20,
+  
   }
 });
 
