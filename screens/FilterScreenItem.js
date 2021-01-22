@@ -3,37 +3,32 @@ import React, { useState } from "react";
 import { useEffect } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Loading } from '../components';
-
-import * as API from "../api/endpoints"
+import { city, work_type } from '../constants';
+import * as API from "../api/endpoints";
+const localStorageUtils = require('../utils/local-store');
 const axios = require('axios').default;
 
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-14s5571e29d72',
-        title: 'Third Item',
-    },
-    {
-        id: '58694a0f-sdsd-471f-bd96-asdsdad',
-        title: 'Four Item',
-    },
-    {
-        id: '58694a034344f-sdsd-471f-axxx-asdsdad',
-        title: 'Five Item',
-    },
-];
+const saveFilter = async (filterType, filterData) => {
+    const filter = { filterType, filterData }
+    localStorageUtils.saveFilterToLS(filter);
+}
 
-const Item = ({ item, onPress, style }) => (
+const Item = ({ item, onPress, style, type }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, styles.blockItem]}>
-        <Text style={styles.title}>{item.major_name}</Text>
-        <Icon name="check" family="Entypo" color={'#29DBA0'} size={16} style={[style]} />
+        {
+            (type.localeCompare('major') == 0) &&
+            <Text style={styles.title}>{item.major_name}</Text>
+        }
+        {
+            (type.localeCompare('city') == 0) &&
+            <Text style={styles.title}>{item.name}</Text>
+        }
+        {
+            (type.localeCompare('work_type') == 0) &&
+            <Text style={styles.title}>{item.name}</Text>
+        }
+        {/* <Text style={styles.title}>'heelo'</Text> */}
+        <Icon name="check" family="AntDesign" color={'#29DBA0'} size={16} style={[style]} />
     </TouchableOpacity>
 );
 
@@ -42,18 +37,32 @@ const FilterScreenItem = (props) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [data, setData] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
-    const {navigation, route} = props
-    //how to get :v 
+    const [typeItem, setTypeItem] = useState(null);
+    const [localFilterMajor, setLocalFilterMajor] = useState(null)
+    const [localFilterCity, setLocalFilterCity] = useState(null)
+    const [localFilterWorkType, setLocalFilterWorkType] = useState(null)
+    const { navigation, route } = props
 
-    //CHECK DATA FROM PARAM PREVIOUS SCREEN
-    // API = MAJOR/WORKTYPE => SET const url : {API.SAMECASE}
 
 
     useEffect(() => {
-        const {item} = route.params
-        console.log("FilterScreenItem| item params from previous");
-        console.log(item);
-        prepareItem = async () => {
+
+        const getFilter = async (filter) => {
+            const major = await localStorageUtils.getFilterFromLS('major')
+            const city = await localStorageUtils.getFilterFromLS('city')
+            const workType = await localStorageUtils.getFilterFromLS('work_type')
+            console.log("Filter DATA");
+            console.log(major.major_name);
+            console.log(city.name);
+            console.log(workType.name);
+            setLocalFilterMajor(major)
+            setLocalFilterCity(city)
+            setLocalFilterWorkType(workType)
+        }
+
+        getFilter()
+
+        const prepareItem = async () => {
             const headers = {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
@@ -61,13 +70,12 @@ const FilterScreenItem = (props) => {
             try {
                 const response = await axios({
                     method: 'GET',
-                    url: API.LIST_MAJOR, //Inject dynamic url in here
+                    url: API.LIST_MAJOR,
                     headers
                 })
 
                 if (response.status == 200) {
                     const majors = response.data
-                    // console.log(majors.data);
                     setIsLoaded(true)
                     setData(majors.data)
                 }
@@ -77,7 +85,27 @@ const FilterScreenItem = (props) => {
             }
         }
 
-        prepareItem()
+        const { item } = route.params
+
+        switch (item.id) {
+            
+            case 'major':
+                setTypeItem('major')
+                prepareItem()
+                break;
+            case 'city':
+                setIsLoaded(true)
+                setTypeItem('city')
+                break;
+            case 'work_type':
+                setIsLoaded(true)
+                setTypeItem('work_type')
+                break;
+            default:
+                console.log("vo case default");
+                break;
+        }
+
     }, [])
 
     const renderItem = ({ item }) => {
@@ -87,23 +115,57 @@ const FilterScreenItem = (props) => {
         return (
             <Item
                 item={item}
-                onPress={() => setSelectedId(item.id)}
+                onPress={() => {
+                    setSelectedId(item.id)
+                    const filter = { type: typeItem, data: item }
+                    saveFilter(typeItem, filter)
+                }}
                 style={{ display }}
+                type={typeItem}
             />
         );
     };
 
     if (isLoaded) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <FlatList
-                    data={data}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.major_name}
-                    extraData={selectedId}
-                />
-            </SafeAreaView>
-        );
+        switch (typeItem) {
+            case 'major':
+                return (
+                    <SafeAreaView style={styles.container}>
+                        <FlatList
+                            data={data}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            extraData={selectedId}
+                        />
+                    </SafeAreaView>
+                );
+            case 'city':
+                return (
+                    <SafeAreaView style={styles.container}>
+                        <FlatList
+                            data={city}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            extraData={selectedId}
+                        />
+                    </SafeAreaView>
+                );
+            case 'work_type':
+                return (
+                    <SafeAreaView style={styles.container}>
+                        <FlatList
+                            data={work_type}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            extraData={selectedId}
+                        />
+                    </SafeAreaView>
+                );
+            default:
+                return (
+                    <Text>Lỗi - Không tải được bộ lọc</Text>
+                );
+        }
     }
     else {
         return (
@@ -114,7 +176,7 @@ const FilterScreenItem = (props) => {
                     keyExtractor={(item) => item.id}
                     extraData={selectedId}
                 /> */}
-                <Loading message={'Đang tải bộ lọc'}/>
+                <Loading message={'Đang tải bộ lọc'} />
             </SafeAreaView>
         )
     }
