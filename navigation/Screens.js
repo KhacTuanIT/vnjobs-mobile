@@ -30,6 +30,7 @@ import * as API from "../api/endpoints"
 import Apply from "../screens/Apply";
 import SearchResult from "../screens/SearchResult";
 import FilterScreen from "../screens/FilterScreen";
+import FilterScreenItem from "../screens/FilterScreenItem";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
@@ -223,6 +224,38 @@ function ListJobsStack(props) {
           headerTransparent: true
         }}
       />
+      <Stack.Screen
+        name="FilterScreen"
+        component={FilterScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              title="Lọc"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      <Stack.Screen
+        name="FilterScreenItem"
+        component={FilterScreenItem}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              title="Lọc"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -332,6 +365,22 @@ function HomeStack(props) {
       <Stack.Screen
         name="FilterScreen"
         component={FilterScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              title="Lọc"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      <Stack.Screen
+        name="FilterScreenItem"
+        component={FilterScreenItem}
         options={{
           header: ({ navigation, scene }) => (
             <Header

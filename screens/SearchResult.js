@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { Block, theme, Text, Icon } from "galio-framework";
 
-import { Card, Header, Button, HotMajor, ListRecruitmentNews } from "../components";
+import { Card, Header, Button, HotMajor, ListRecruitmentNews, Input } from "../components";
 import articles from "../constants/articles";
 import localStorageUtils from '../utils/local-store';
 import * as API from '../api/endpoints';
@@ -14,7 +14,12 @@ const { width } = Dimensions.get("screen");
 
 class SearchResult extends React.Component {
 
-
+  constructor(props) {
+    super(props)
+    this.state = {
+      key: ''
+    }
+  }
 
   /*
   renderContent() {
@@ -45,6 +50,43 @@ class SearchResult extends React.Component {
 
   }
   */
+  postAPI = async (url, data) => {
+
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url,
+        headers,
+        data
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  onSearch = () => {
+    console.log(this.state.key)
+    this.setState({ loadingSearching: true });
+    const { route, navigation } = this.props
+    if (this.state.key != '') {
+      const data = {
+        city: this.state.key
+      }
+      const url = API.SEARCH;
+      this.postAPI(url, data)
+        .then(res => {
+          console.log(res.data.data)
+          navigation.navigate('Search', { data: res.data.data, loading: this.state.loadingSearching })
+        }).catch(err => console.log(err))
+    }
+  }
+
   render() {
     /*
     const renderContent = () => {
@@ -73,6 +115,7 @@ class SearchResult extends React.Component {
     }
     */
 
+
     const { route, navigation } = this.props
     const { data, title } = route.params
     const recruitmentNews = data
@@ -83,6 +126,16 @@ class SearchResult extends React.Component {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.articles}
         >
+          <Block flex middle>
+            <Input
+              onChangeText={key => { this.setState({ key: key }) }}
+              value={this.state.key}
+            />
+            <TouchableOpacity style={styles.buttonSearch} onPress={() => this.onSearch()} >
+              <Text color='#777' sizes={18}>Tìm kiếm ... </Text>
+            </TouchableOpacity>
+
+          </Block>
           <Block row flex style={styles.filterBar}>
             <Text style={styles.leftFilterText}>Kết quả tìm kiếm</Text>
             <Button
@@ -99,21 +152,21 @@ class SearchResult extends React.Component {
                 </Button>
           </Block>
           <Block style={styles.blockJobs}>
-            { 
+            {
               recruitmentNews &&
-                recruitmentNews.map((value, id) => {
-                  console.log('run_in_here');
-                  return (
-                    <RecruitmentNewsSearchResult 
-                      key={id}
-                      news={recruitmentNews[id]}
-                      navigation={navigation}
-                      route={route}
-                    />
-          
-                  )
-                })
-              }
+              recruitmentNews.map((value, id) => {
+                console.log('run_in_here');
+                return (
+                  <RecruitmentNewsSearchResult
+                    key={id}
+                    news={recruitmentNews[id]}
+                    navigation={navigation}
+                    route={route}
+                  />
+
+                )
+              })
+            }
           </Block>
         </ScrollView>
       </Block>
@@ -143,7 +196,16 @@ const styles = StyleSheet.create({
   blockJobs: {
     // marginTop: 20,
     // paddingBottom: 20,
-  
+
+  },
+  buttonSearch: {
+    paddingHorizontal: 17,
+    paddingVertical: 8,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+    marginBottom: 15,
   }
 });
 
