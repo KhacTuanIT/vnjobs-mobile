@@ -23,12 +23,13 @@ import EditProfile from "../screens/EditProfile";
 import CustomDrawerContent from "./Menu";
 
 // header for screens
-import { Icon, Header, ListRecruitmentNews } from "../components";
+import { Icon, Header, ListRecruitmentNews, RecruitmentNewsSearchResult } from "../components";
 import { argonTheme, tabs } from "../constants";
 import RecruitmentNews from "../screens/RecruitmentNews";
 import * as API from "../api/endpoints"
 import Apply from "../screens/Apply";
 import SearchResult from "../screens/SearchResult";
+import FilterScreen from "../screens/FilterScreen";
 const axios = require('axios').default;
 
 const { width } = Dimensions.get("screen");
@@ -312,7 +313,38 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: "#FFFFFF" }
         }}
       />
-      
+      <Stack.Screen
+        name="RecruitmentNewsSearchResult"
+        component={RecruitmentNewsSearchResult}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              title="Kết quả tìm kiếm"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
+      <Stack.Screen
+        name="FilterScreen"
+        component={FilterScreen}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              back
+              title="Lọc"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          // headerTransparent: true,
+          cardStyle: { backgroundColor: "#FFFFFF" }
+        }}
+      />
     </Stack.Navigator>
   );
 }
