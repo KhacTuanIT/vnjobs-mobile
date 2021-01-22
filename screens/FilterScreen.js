@@ -2,31 +2,24 @@ import { Block, Input, Icon } from 'galio-framework'
 import React, { useState } from "react";
 import { useEffect } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Loading } from '../components';
+import { Loading, Button } from '../components';
+const localStorageUtils = require('../utils/local-store');
 
 import * as API from "../api/endpoints"
 const axios = require('axios').default;
 
 const DATA = [
     {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
+        id: 'major',
+        title: 'Ngành Nghề',
     },
     {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
+        id: 'city',
+        title: 'Tỉnh / thành phố',
     },
     {
-        id: '58694a0f-3da1-471f-bd96-14s5571e29d72',
-        title: 'Third Item',
-    },
-    {
-        id: '58694a0f-sdsd-471f-bd96-asdsdad',
-        title: 'Four Item',
-    },
-    {
-        id: '58694a034344f-sdsd-471f-axxx-asdsdad',
-        title: 'Five Item',
+        id: 'work_type',
+        title: 'Loại hình',
     },
 ];
 
@@ -46,12 +39,7 @@ const FilterScreen = (props) => {
     const [isLoaded, setIsLoaded] = useState(true);
     const [data, setData] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
-    
     const {navigation, route} = props
-
-    //CHECK DATA FROM PARAM PREVIOUS SCREEN
-    // API = MAJOR/WORKTYPE => SET const url : {API.SAMECASE}
-
 
     useEffect(() => {
 
@@ -65,8 +53,6 @@ const FilterScreen = (props) => {
                 item={item}
                 onPress={() => {
                     setSelectedId(item.id)
-                    // v set select lafm chi v
-                    //no co san :v cua docs
                     navigation.navigate('FilterScreenItem', {item: item})
                 }}
                 //style={{  }}
@@ -76,6 +62,12 @@ const FilterScreen = (props) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <Block center>
+                <Button onPress={()=> {
+                    localStorageUtils.clearAllFilter()
+                }}> Xoá tất cả bộ lọc</Button>
+                
+            </Block>
             <FlatList
                 // key={(item) => item.id}
                 data={DATA}
