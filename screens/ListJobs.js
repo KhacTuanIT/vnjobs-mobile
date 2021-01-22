@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { Block, theme, Text, Icon } from "galio-framework";
 
-import { Card, Header, Button, HotMajor, ListRecruitmentNews } from "../components";
+import { Card, Header, Button, HotMajor, ListRecruitmentNews, Input } from "../components";
 import articles from "../constants/articles";
 import localStorageUtils from '../utils/local-store';
 import * as API from '../api/endpoints';
@@ -18,6 +18,43 @@ class ListJobs extends React.Component {
     recruitmentNews: null,
     key: ''
   };
+
+  postAPI = async (url, data) => {
+
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url,
+        headers,
+        data
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  onSearch = () => {
+    console.log(this.state.key)
+    this.setState({ loadingSearching: true });
+    const { route, navigation } = this.props
+    if (this.state.key != '') {
+      const data = {
+        city: this.state.key
+      }
+      const url = API.SEARCH;
+      this.postAPI(url, data)
+        .then(res => {
+          console.log(res.data.data)
+          navigation.navigate('Search', { data: res.data.data, loading: this.state.loadingSearching })
+        }).catch(err => console.log(err))
+    }
+  }
 
   async componentDidMount() {
     this.setState({ isLoading: true })
@@ -118,7 +155,7 @@ class ListJobs extends React.Component {
 
   render() {
     const { recruitmentNews } = this.state
-    const {navigation, route} = this.props
+    const { navigation, route } = this.props
     console.log("RECRUIT:STT||" + recruitmentNews);
     return (
       <Block flex center style={styles.home}>
@@ -137,6 +174,16 @@ class ListJobs extends React.Component {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.articles}
         >
+          <Block flex middle>
+            <Input
+              onChangeText={key => { this.setState({ key: key }) }}
+              value={this.state.key}
+            />
+            <TouchableOpacity style={styles.buttonSearch} onPress={() => this.onSearch()} >
+              <Text color='#777' sizes={18}>Tìm kiếm ... </Text>
+            </TouchableOpacity>
+
+          </Block>
           <HotMajor data={this.state.majors} />
           <Block row flex style={styles.filterBar}>
             <Text style={styles.leftFilterText}>Có 1000 công việc phù hợp</Text>
@@ -190,6 +237,15 @@ const styles = StyleSheet.create({
   blockJobs: {
     // marginTop: 20,
     // paddingBottom: 20,
+  },
+  buttonSearch: {
+    paddingHorizontal: 17,
+    paddingVertical: 8,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#fff',
+    marginBottom: 15,
   }
 });
 
