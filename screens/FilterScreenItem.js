@@ -7,7 +7,9 @@ import { city, work_type } from '../constants';
 import * as API from "../api/endpoints";
 const localStorageUtils = require('../utils/local-store');
 const axios = require('axios').default;
-
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 const saveFilter = async (filterType, filterData) => {
     const filter = { filterType, filterData }
     localStorageUtils.saveFilterToLS(filter);
