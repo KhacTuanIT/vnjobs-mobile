@@ -34,17 +34,12 @@ class Onboarding extends React.Component {
               <Block style={styles.title}>
                 <Block>
                   <Text color="white" size={60}>
-                    Design
-                  </Text>
-                </Block>
-                <Block>
-                  <Text color="white" size={60}>
-                    System
+                    VNJobs
                   </Text>
                 </Block>
                 <Block style={styles.subTitle}>
                   <Text color="white" size={16}>
-                    Fully coded React Native components.
+                    Jobs for you
                   </Text>
                 </Block>
               </Block>
@@ -82,8 +77,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0
   },
   logo: {
-    width: 200,
-    height: 60,
+    // width: 60,
+    // height: 60,
     zIndex: 2,
     position: 'relative',
     marginTop: '-50%'
