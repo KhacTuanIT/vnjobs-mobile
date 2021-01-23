@@ -70,7 +70,7 @@ class SearchResult extends React.Component {
     }
   }
 
-  onSearch = () => {
+  onSearch = async() => {
     console.log(this.state.key)
     this.setState({ loadingSearching: true });
     const { route, navigation } = this.props
@@ -78,15 +78,62 @@ class SearchResult extends React.Component {
       const data = {
         city: this.state.key
       }
+      const major = await localStorageUtils.getFilterFromLS('major')
+      const city = await localStorageUtils.getFilterFromLS('city')
+      const workType = await localStorageUtils.getFilterFromLS('work_type')
+      if (major !== undefined) data.major = major.major_name
+      if (city !== undefined) data.city = city.name
+      if (workType !== undefined) data.workType = workType.name
+      data.city = this.state.key
       const url = API.SEARCH;
       this.postAPI(url, data)
         .then(res => {
           console.log(res.data.data)
+          localStorageUtils.clearAllFilter();
+          navigation.navigate('Search', { data: res.data.data, loading: this.state.loadingSearching })
+        }).catch(err => console.log(err))
+    }
+    else {
+      const major = await localStorageUtils.getFilterFromLS('major')
+      const city = await localStorageUtils.getFilterFromLS('city')
+      const workType = await localStorageUtils.getFilterFromLS('work_type')
+      console.log("Filter DATA in SearchResult");
+
+      const data = {
+      }
+      console.log(data)
+      if (major !== undefined) data.major = major.major_name
+      if (city !== undefined) data.city = city.name
+      if (workType !== undefined) data.workType = workType.name
+      const url = API.SEARCH;
+      this.postAPI(url, data)
+        .then(res => {
+          console.log(res.data.data)
+          localStorageUtils.clearAllFilter();
           navigation.navigate('Search', { data: res.data.data, loading: this.state.loadingSearching })
         }).catch(err => console.log(err))
     }
   }
 
+  // getFilter = async (filter) => {
+      
+  //     console.log(data)
+  //     if (major !== undefined || city !== undefined || workType !== undefined) {
+  //       console.log(data)
+  //       const url = API.SEARCH;
+  //       this.postAPI(url, data)
+  //         .then(res => {
+  //           console.log(res.data.data)
+  //           localStorageUtils.clearAllFilter();
+  //           navigation.navigate('Search', { data: res.data.data, loading: this.state.loadingSearching })
+  //         }).catch(err => console.log(err))
+  //     }
+
+      
+  //     // console.log(major.major_name ? major.major_name : 'Khong tim thay major name');
+  //     // console.log(city.name ? city.name : 'Khong tim thay city name');
+  //     // console.log(workType.name ? workType.name : 'Khong tim thay worktype name');
+  // }
   render() {
     /*
     const renderContent = () => {
@@ -115,10 +162,11 @@ class SearchResult extends React.Component {
     }
     */
 
-
+    // this.getFilter()
     const { route, navigation } = this.props
     const { data, title } = route.params
-    const recruitmentNews = data
+    console.log(data)
+    const recruitmentNews = data;
     // console.log(recruitmentNews)
     return (
       <Block flex center style={styles.home}>
