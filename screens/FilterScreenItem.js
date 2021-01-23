@@ -52,9 +52,9 @@ const FilterScreenItem = (props) => {
             const city = await localStorageUtils.getFilterFromLS('city')
             const workType = await localStorageUtils.getFilterFromLS('work_type')
             console.log("Filter DATA");
-            console.log(major.major_name);
-            console.log(city.name);
-            console.log(workType.name);
+            console.log(major.major_name ? major.major_name : 'Khong tim thay major name');
+            console.log(city.name ? city.name : 'Khong tim thay city name');
+            console.log(workType.name ? workType.name : 'Khong tim thay worktype name');
             setLocalFilterMajor(major)
             setLocalFilterCity(city)
             setLocalFilterWorkType(workType)
@@ -134,7 +134,7 @@ const FilterScreenItem = (props) => {
                         <FlatList
                             data={data}
                             renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.id.toString()}
                             extraData={selectedId}
                         />
                     </SafeAreaView>
@@ -145,7 +145,7 @@ const FilterScreenItem = (props) => {
                         <FlatList
                             data={city}
                             renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.id.toString()}
                             extraData={selectedId}
                         />
                     </SafeAreaView>
@@ -156,7 +156,7 @@ const FilterScreenItem = (props) => {
                         <FlatList
                             data={work_type}
                             renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.id.toString()}
                             extraData={selectedId}
                         />
                     </SafeAreaView>

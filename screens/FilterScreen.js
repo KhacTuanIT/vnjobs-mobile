@@ -72,7 +72,7 @@ const FilterScreen = (props) => {
                 // key={(item) => item.id}
                 data={DATA}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 extraData={selectedId}
             />
         </SafeAreaView>
