@@ -29,3 +29,7 @@ Version: **Beta 0.1.0**
 3. Run App with yarn or npm
 
   	`yarn start` or `npm start`
+	
+## License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
